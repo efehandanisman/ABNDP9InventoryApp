@@ -1,0 +1,375 @@
+package com.example.android.abndp9inventoryapp;
+
+import android.app.AlertDialog;
+import android.app.LoaderManager;
+import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.android.abndp9inventoryapp.data.InventoryContract;
+import com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry;
+
+/**
+ * Created by Efehan on 22.6.2018.
+ */
+
+public class InventoryManagementActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private final static int EXISTING_PROD_LOADER = 0;
+    private Uri mCurrentProdUri;
+    private boolean mProdHasChanged = false;
+    private EditText mNameEditText;
+    private EditText mType;
+    private EditText mPrice;
+    private Spinner mStockSpinner;
+    private Spinner mDiscountSpinner;
+    private EditText mQuantity;
+    private EditText mSupplierPhone;
+    private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
+    private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_inventorymanagement);
+        Intent intent = getIntent();
+        Uri mCurrentProdUri = intent.getData();
+        if(mCurrentProdUri == null) {
+            setTitle("Add a product");
+        }else {
+            setTitle("Edit Product");
+        }
+        getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
+
+        mNameEditText = (EditText) findViewById(R.id.edit_prod_name);
+        mType = (EditText) findViewById(R.id.edit_type);
+        mPrice = (EditText) findViewById(R.id.price);
+        mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
+        mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
+        mQuantity = (EditText) findViewById(R.id.numberofproduct);
+        mSupplierPhone = (EditText) findViewById(R.id.phone);
+
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(13);
+
+        mSupplierPhone.setFilters(filters);
+
+        setupSpinner();
+        mNameEditText.setOnTouchListener(mTouchListener);
+        mType.setOnTouchListener(mTouchListener);
+        mPrice.setOnTouchListener(mTouchListener);
+        mQuantity.setOnTouchListener(mTouchListener);
+        mStockSpinner.setOnTouchListener(mTouchListener);
+        mDiscountSpinner.setOnTouchListener(mTouchListener);
+        mSupplierPhone.setOnTouchListener(mTouchListener);
+    }
+    private void setupSpinner() {
+        // Create adapter for spinner. The list options are from the String array it will use
+        // the spinner will use the default layout
+        ArrayAdapter stockSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.array_stock_options, android.R.layout.simple_spinner_item);
+
+        // Specify dropdown layout style - simple list view with 1 item per line
+        stockSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+        // Apply the adapter to the spinner
+        mStockSpinner.setAdapter(stockSpinnerAdapter);
+
+        // Set the integer mSelected to the constant values
+        mStockSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String) parent.getItemAtPosition(position);
+                if (!TextUtils.isEmpty(selection)) {
+                    if (selection.equals(getString(R.string.in_stock))) {
+                        mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK; // IN STOCK
+                    } else {
+                        mStock = InventoryContract.InventoryEntry.COLUMN_OUTOF_STOCK; // OUT OF STOCK
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mStock = 0; // Unknown
+            }
+        });
+
+}
+
+private void saveProduct() {
+String nameString = mNameEditText.getText().toString().trim();
+    String typeString = mType.getText().toString().trim();
+    String priceString = mPrice.getText().toString().trim();
+    String quantityString = mQuantity.getText().toString().trim();
+
+    if (mCurrentProdUri == null &&
+            TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
+            TextUtils.isEmpty(priceString)) {
+        return;
+    }
+    ContentValues values = new ContentValues();
+values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,nameString);
+values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE,typeString);
+
+int price = 0;
+if(!TextUtils.isEmpty(priceString)) {
+    price = Integer.parseInt(priceString);
+}
+
+values.put(InventoryContract.InventoryEntry.COLUMN_PRICE,price);
+    int quantity = 0;
+    if(!TextUtils.isEmpty(quantityString)) {
+        quantity = Integer.parseInt(quantityString);
+    }
+    values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, quantity);
+
+    values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, mStock);
+    values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, mDiscount);
+
+
+if (mCurrentProdUri == null) {
+    Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,values);
+    if (newUri == null) {
+        Toast.makeText(this, "Product can not be saved", Toast.LENGTH_SHORT).show();
+    }else{
+        Toast.makeText(this,"Product updated",Toast.LENGTH_SHORT).show();
+
+    }
+}
+
+Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,values);
+}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu options from the res/menu/menu_editor.xml file.
+        // This adds menu items to the app bar.
+        getMenuInflater().inflate(R.menu.menu_managementactivity, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // User clicked on a menu option in the app bar overflow menu
+        switch (item.getItemId()) {
+            // Respond to a click on the "Save" menu option
+            case R.id.action_save:
+                saveProduct();
+                finish();
+                return true;
+            case R.id.action_delete:
+                showDeleteConfirmationDialog();
+            return true;
+            case android.R.id.home:
+                if(!mProdHasChanged) {
+                    NavUtils.navigateUpFromSameTask(InventoryManagementActivity.this);
+                    return true;
+                }
+                DialogInterface.OnClickListener discardButtonClickListener =
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // User clicked "Discard" button, navigate to parent activity.
+                                NavUtils.navigateUpFromSameTask(InventoryManagementActivity.this);
+                            }
+                        };
+
+                showUnsavedChangesDialog(discardButtonClickListener);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+String[] projection = {
+        InventoryEntry._ID,
+        InventoryEntry.COLUMN_PRODUCT_NAME,
+        InventoryEntry.COLUMN_PRODUCT_TYPE,
+        InventoryEntry.COLUMN_STOCK,
+        InventoryEntry.COLUMN_PRICE,
+        InventoryEntry.COLUMN_DISCOUNT};
+        return new CursorLoader(this,mCurrentProdUri,projection,null,null,null);
+}
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor == null || cursor.getCount() < 1) {
+            return;
+        }
+        if (cursor.moveToFirst()) {
+
+        }
+        // Find the columns of attributes that we're interested in
+
+        int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
+        int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
+        int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY);
+        int stockColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_STOCK);
+        int discountColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DISCOUNT);
+
+        // Extract out the value from the Cursor for the given column index
+String name = cursor.getString(nameColumnIndex);
+String product = cursor.getString(productColumnIndex);
+int quantity = cursor.getInt(quantityColumnIndex);
+int stock = cursor.getInt(stockColumnIndex);
+int discount = cursor.getInt(discountColumnIndex);
+
+mNameEditText.setText(name);
+mType.setText(product);
+mQuantity.setText(Integer.toString(quantity));
+switch(stock) {
+    case InventoryEntry.COLUMN_IN_STOCK:
+        mStockSpinner.setSelection(1);
+        break;
+    case InventoryEntry.COLUMN_OUTOF_STOCK:
+        mStockSpinner.setSelection(2);
+        break;
+    default:
+        mStockSpinner.setSelection(1);
+        break;
+}
+
+switch(discount) {
+    case InventoryEntry.COLUMN_IN_DISCOUNT:
+        mDiscountSpinner.setSelection(1);
+        break;
+    case InventoryEntry.COLUMN_NO_DISCOUNT:
+        mDiscountSpinner.setSelection(2);
+        break;
+    default:
+        mDiscountSpinner.setSelection(2);
+        break;
+}
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+mNameEditText.setText("");
+mType.setText("");
+mQuantity.setText("0");
+mDiscountSpinner.setSelection(2);
+mStockSpinner.setSelection(1);
+        }
+
+        private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+            mProdHasChanged = true;
+            return false;
+        }
+    };
+private void showUnsavedChangesDialog(
+        DialogInterface.OnClickListener discardButtonClickListener) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage("Do you want to delete all changes and return to main page");
+    builder.setPositiveButton("Delete and Return",discardButtonClickListener);
+    builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+            if(dialog != null) {
+                dialog.dismiss();
+            }
+        }
+    });
+    AlertDialog alertDialog = builder.create();
+    alertDialog.show();
+}
+
+
+    @Override
+    public void onBackPressed() {
+        // If the pet hasn't changed, continue with handling back button press
+        if (!mProdHasChanged) {
+            super.onBackPressed();
+            return;
+        }
+        // Otherwise if there are unsaved changes, setup a dialog to warn the user.
+        // Create a click listener to handle the user confirming that changes should be discarded.
+        DialogInterface.OnClickListener discardButtonClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // User clicked "Discard" button, close the current activity.
+                        finish();
+                    }
+                };
+        showUnsavedChangesDialog(discardButtonClickListener);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (mCurrentProdUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deletePet();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        android.support.v7.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Perform the deletion of the product in the database.
+     */
+    private void deletePet() {
+        if (mCurrentProdUri != null) {
+            int rowsDeleted = getContentResolver().delete(mCurrentProdUri, null, null);
+            // Show a toast message depending on whether or not the delete was successful.
+            if (rowsDeleted == 0) {
+                // If no rows were deleted, then there was an error with the delete.
+                Toast.makeText(this, getString(R.string.editor_delete_prod_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the delete was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.editor_delete_prod_successful),
+                        Toast.LENGTH_SHORT).show();
+                finish();
+
+            }
+
+
+        }
+    }
+}

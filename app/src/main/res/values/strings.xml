@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ABNDP9InventoryApp</string>
+    <string name="empty_view_title_text">No Product Found</string>
+    <string name="empty_view_subtitle_text">Please check back later!</string>
+    <string name="action_insert_dummy_data">Add product</string>
+    <string name="action_delete_all">Delete them all</string>
+    <string name="action_delete">Delete </string>
+    <string name="action_save">Save </string>
+    <string name="delete">Delete </string>
+    <string name="delete_dialog_msg"> Product deleted </string>
+    <string name="cancel"> Cancel </string>
+    <string name="editor_delete_prod_failed">Failed to delete product </string>
+    <string name="editor_delete_prod_successful">Product successfully deleted </string>
+
+    <string name="in_stock"> In Stock </string>
+    <string name="out_stock"> Out of Stock </string>
+
+
+</resources>
