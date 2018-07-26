@@ -11,20 +11,20 @@ import com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEn
 
 public class InventoryDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "inventory.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "inventory.db";
 
     public InventoryDbHelper(Context context) { super(context, DATABASE_NAME,null,DATABASE_VERSION); }
     public void onCreate(SQLiteDatabase db) {
-        String SQL_CREATE_ENTRIES = "CREATE TABLE" + InventoryEntry.TABLE_NAME + " ("
+        String SQL_CREATE_ENTRIES = "CREATE TABLE " + InventoryEntry.TABLE_NAME + " ("
                 + InventoryEntry._ID + " INTEGER PRIMARY KEY AUTO INCREMENT, "
-                + InventoryEntry.COLUMN_PRODUCT_NAME + "TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PRODUCT_TYPE + "TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PRICE + "INTEGER NOT NULL,"
-                + InventoryEntry.COLUMN_STOCK + "INTEGER NOT NULL,"
-                + InventoryEntry.COLUMN_QUANTITY + "INTEGER NOT NULL, "
-                + InventoryEntry.COLUMN_DISCOUNT + "INTEGER NOT NULL);"
-                +InventoryEntry.COLUMN_SUPPLIER_PHONE + "INTEGER";
+                + InventoryEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
+                + InventoryEntry.COLUMN_PRODUCT_TYPE + " TEXT NOT NULL, "
+                + InventoryEntry.COLUMN_PRICE + " INTEGER NOT NULL DEFAULT 0, "
+                + InventoryEntry.COLUMN_STOCK + " INTEGER NOT NULL, "
+                + InventoryEntry.COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
+                + InventoryEntry.COLUMN_DISCOUNT + " INTEGER NOT NULL, "
+                + InventoryEntry.COLUMN_SUPPLIER_PHONE + " INTEGER);" ;
 
         db.execSQL(SQL_CREATE_ENTRIES);
     }

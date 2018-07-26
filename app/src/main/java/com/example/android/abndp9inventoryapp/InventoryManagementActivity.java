@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -20,8 +21,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.abndp9inventoryapp.data.InventoryContract;
@@ -41,16 +45,23 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private EditText mPrice;
     private Spinner mStockSpinner;
     private Spinner mDiscountSpinner;
-    private EditText mQuantity;
+    private TextView mQuantityView;
+    private int mQuantity;
+
     private EditText mSupplierPhone;
+    ImageButton sellProduct;
+    ImageButton addProduct;
+
+
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
     private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventorymanagement);
         Intent intent = getIntent();
-        Uri mCurrentProdUri = intent.getData();
+        mCurrentProdUri = intent.getData();
         if(mCurrentProdUri == null) {
             setTitle("Add a product");
         }else {
@@ -63,7 +74,8 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPrice = (EditText) findViewById(R.id.price);
         mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
-        mQuantity = (EditText) findViewById(R.id.numberofproduct);
+        sellProduct = (ImageButton) findViewById(R.id.decrease_button);
+        addProduct = (ImageButton) findViewById(R.id.increase_button);
         mSupplierPhone = (EditText) findViewById(R.id.phone);
 
         InputFilter[] filters = new InputFilter[1];
@@ -75,10 +87,68 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mNameEditText.setOnTouchListener(mTouchListener);
         mType.setOnTouchListener(mTouchListener);
         mPrice.setOnTouchListener(mTouchListener);
-        mQuantity.setOnTouchListener(mTouchListener);
         mStockSpinner.setOnTouchListener(mTouchListener);
         mDiscountSpinner.setOnTouchListener(mTouchListener);
         mSupplierPhone.setOnTouchListener(mTouchListener);
+
+final ImageButton incrementButton = (ImageButton) findViewById(R.id.increase_button);
+        incrementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // On click quantity increases
+                mQuantity++;
+                // display quantity
+                displayQuantity();
+            }
+        });
+
+
+        final ImageButton decrementButton = (ImageButton) findViewById(R.id.decrease_button);
+        decrementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on click quantity decreases
+                decrementButton(v);
+                // display quantity
+                displayQuantity();
+            }
+        });
+    }
+
+    public void decrementButton(View view) {
+        // If quantity = 0 show toast message
+        if (mQuantity == 0) {
+            Toast.makeText(this, "You can't have less than 0 product", Toast.LENGTH_SHORT).show();
+        } else {
+            // If quantity is not 0, decrease quantity
+            mQuantity--;
+            displayQuantity();
+        }
+    }
+
+    public void displayQuantity() {
+        TextView quantityView = (TextView) findViewById(R.id.quantity);
+        quantityView.setText(String.valueOf(mQuantity));
+    }
+
+    public void orderNow() {
+        // If quantity id 0, display toast message
+        if (mQuantity == 0) {
+            Toast.makeText(this, "Quantity is required", Toast.LENGTH_SHORT).show();
+
+        } else {
+            // Else display toast message
+            Toast.makeText(this, "Products have been successfully ordered", Toast.LENGTH_SHORT).show();
+
+            // Set an intent that makes the user go to the Phone Call
+            // when the order is done.
+            String phoneNumber = mSupplierPhone.getText().toString().trim();
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+            if (callIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(callIntent);
+            }
+        }
     }
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
@@ -118,34 +188,27 @@ private void saveProduct() {
 String nameString = mNameEditText.getText().toString().trim();
     String typeString = mType.getText().toString().trim();
     String priceString = mPrice.getText().toString().trim();
-    String quantityString = mQuantity.getText().toString().trim();
+    String quantityString = mQuantityView.getText().toString().trim();
+    String phoneString = mSupplierPhone.getText().toString().trim();
 
     if (mCurrentProdUri == null &&
             TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
             TextUtils.isEmpty(priceString)) {
+        finish();
         return;
     }
     ContentValues values = new ContentValues();
 values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,nameString);
 values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE,typeString);
-
-int price = 0;
-if(!TextUtils.isEmpty(priceString)) {
-    price = Integer.parseInt(priceString);
-}
-
-values.put(InventoryContract.InventoryEntry.COLUMN_PRICE,price);
-    int quantity = 0;
-    if(!TextUtils.isEmpty(quantityString)) {
-        quantity = Integer.parseInt(quantityString);
-    }
-    values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, quantity);
-
-    values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, mStock);
-    values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, mDiscount);
+values.put(InventoryEntry.COLUMN_PRICE,priceString);
+    values.put(InventoryEntry.COLUMN_QUANTITY,quantityString);
+    values.put(InventoryEntry.COLUMN_SUPPLIER_PHONE,phoneString);
+    values.put(InventoryEntry.COLUMN_DISCOUNT,mDiscount);
+    values.put(InventoryEntry.COLUMN_STOCK,mStock);
 
 
 if (mCurrentProdUri == null) {
+
     Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,values);
     if (newUri == null) {
         Toast.makeText(this, "Product can not be saved", Toast.LENGTH_SHORT).show();
@@ -153,9 +216,20 @@ if (mCurrentProdUri == null) {
         Toast.makeText(this,"Product updated",Toast.LENGTH_SHORT).show();
 
     }
+} else {
+    int rowsAffected = getContentResolver().update(mCurrentProdUri, values, null, null);
+    if (rowsAffected == 0) {
+        // If no rows were affected, then there was an error with the update.
+        Toast.makeText(this, getString(R.string.update_prod_failed),
+                Toast.LENGTH_SHORT).show();
+
+    } else {
+        // Otherwise, the update was successful and we can display a toast.
+        Toast.makeText(this, getString(R.string.update_prod_succeed),
+                Toast.LENGTH_SHORT).show();
+    }
 }
 
-Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,values);
 }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -205,7 +279,8 @@ String[] projection = {
         InventoryEntry.COLUMN_PRODUCT_TYPE,
         InventoryEntry.COLUMN_STOCK,
         InventoryEntry.COLUMN_PRICE,
-        InventoryEntry.COLUMN_DISCOUNT};
+        InventoryEntry.COLUMN_DISCOUNT,
+InventoryEntry.COLUMN_SUPPLIER_PHONE};
         return new CursorLoader(this,mCurrentProdUri,projection,null,null,null);
 }
 
@@ -223,6 +298,7 @@ String[] projection = {
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY);
         int stockColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_STOCK);
+        int supplierphoneColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_PHONE);
         int discountColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DISCOUNT);
 
         // Extract out the value from the Cursor for the given column index
@@ -231,10 +307,12 @@ String product = cursor.getString(productColumnIndex);
 int quantity = cursor.getInt(quantityColumnIndex);
 int stock = cursor.getInt(stockColumnIndex);
 int discount = cursor.getInt(discountColumnIndex);
+int phone = cursor.getInt(supplierphoneColumnIndex);
 
 mNameEditText.setText(name);
 mType.setText(product);
-mQuantity.setText(Integer.toString(quantity));
+mSupplierPhone.setText(phone);
+mQuantityView.setText(Integer.toString(quantity));
 switch(stock) {
     case InventoryEntry.COLUMN_IN_STOCK:
         mStockSpinner.setSelection(1);
@@ -264,8 +342,9 @@ switch(discount) {
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 mNameEditText.setText("");
+mSupplierPhone.setText("");
 mType.setText("");
-mQuantity.setText("0");
+mQuantityView.setText("0");
 mDiscountSpinner.setSelection(2);
 mStockSpinner.setSelection(1);
         }
@@ -349,6 +428,8 @@ private void showUnsavedChangesDialog(
         android.support.v7.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+
 
     /**
      * Perform the deletion of the product in the database.

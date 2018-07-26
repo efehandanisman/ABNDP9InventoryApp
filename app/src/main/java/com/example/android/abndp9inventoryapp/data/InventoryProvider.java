@@ -26,7 +26,6 @@ import static com.example.android.abndp9inventoryapp.data.InventoryContract.Inve
  */
 
 public class InventoryProvider extends ContentProvider {
-    private InventoryDbHelper mDbHelper;
     private static final int INVENTORY = 100;
     private static final int INVENTORY_ID = 101;
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
@@ -37,6 +36,9 @@ public class InventoryProvider extends ContentProvider {
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY,InventoryContract.PATH_INVENTORY + "/#",INVENTORY_ID);
 
     }
+
+    private InventoryDbHelper mDbHelper;
+
     @Override
     public boolean onCreate() {
         mDbHelper = new InventoryDbHelper(getContext());
@@ -86,14 +88,14 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Product need a name");
         }
        Integer discount = values.getAsInteger(COLUMN_DISCOUNT);
-        if(DiscountStatus(discount) == false) {
+        if(!DiscountStatus(discount)) {
         throw new IllegalArgumentException("You need to specify whether this product is in discount");
         }
 
 
 
         Integer stock = values.getAsInteger(COLUMN_STOCK);
-        if(StockStatus(stock) == false) {
+        if(!StockStatus(stock)) {
             throw new IllegalArgumentException("You need to let us know whether we have this product or not");
 
         }
@@ -162,13 +164,13 @@ public class InventoryProvider extends ContentProvider {
             }
         }
         Integer discount = values.getAsInteger(COLUMN_DISCOUNT);
-        if(DiscountStatus(discount) == false) {
+        if(!DiscountStatus(discount)) {
             throw new IllegalArgumentException("You need to specify whether this product is in discount");
 
         }
 
         Integer stock = values.getAsInteger(COLUMN_STOCK);
-        if(StockStatus(stock) == false) {
+        if(!StockStatus(stock)) {
             throw new IllegalArgumentException("You need to let us know whether we have this product or not");
 
         }
@@ -225,8 +227,6 @@ public class InventoryProvider extends ContentProvider {
     }
 
 
-    public void sellProduct(View v) {
-        Integer quantity = quantity - 1;
-    }
+
 }
 

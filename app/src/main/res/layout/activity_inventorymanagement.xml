@@ -38,8 +38,26 @@
         android:layout_height="match_parent"
         android:id="@+id/numberofproduct"/>
 
+    <ImageButton
+        android:id="@+id/decrease_button"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </ImageButton>
+
+    <ImageButton
+        android:id="@+id/increase_button"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </ImageButton>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/phone"/>
+
+
 </LinearLayout>
