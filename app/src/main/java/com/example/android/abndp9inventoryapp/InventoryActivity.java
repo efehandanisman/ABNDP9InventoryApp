@@ -68,7 +68,6 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     }
 
     private void saveProduct() {
-        // Gets the database in write mode
 
         // Create a ContentValues object where column names are the keys,
         // and attributes are the values.
