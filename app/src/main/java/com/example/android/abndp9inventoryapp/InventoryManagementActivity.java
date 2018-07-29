@@ -64,6 +64,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mCurrentProdUri = intent.getData();
         if(mCurrentProdUri == null) {
             setTitle("Add a product");
+            invalidateOptionsMenu();
         }else {
             setTitle("Edit Product");
         }
@@ -76,6 +77,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
         sellProduct = (ImageButton) findViewById(R.id.decrease_button);
         addProduct = (ImageButton) findViewById(R.id.increase_button);
+        mQuantityView= (TextView) findViewById(R.id.quantity);
         mSupplierPhone = (EditText) findViewById(R.id.phone);
 
         InputFilter[] filters = new InputFilter[1];
@@ -113,7 +115,19 @@ final ImageButton incrementButton = (ImageButton) findViewById(R.id.increase_but
                 displayQuantity();
             }
         });
-    }
+
+        final Button orderNowButton = (Button) findViewById(R.id.order_button);
+        orderNowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check that fields are not empty
+                    orderNow();
+                }
+
+        });}
+
+
+
 
     public void decrementButton(View view) {
         // If quantity = 0 show toast message
@@ -150,6 +164,8 @@ final ImageButton incrementButton = (ImageButton) findViewById(R.id.increase_but
             }
         }
     }
+
+
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout

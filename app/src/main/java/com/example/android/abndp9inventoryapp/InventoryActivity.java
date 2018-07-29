@@ -20,7 +20,12 @@ import com.example.android.abndp9inventoryapp.data.InventoryContract;
 import android.support.design.widget.FloatingActionButton;
 
 public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    //Loader
     private static final int PROD_LOADER = 0;
+
+    //Adapter of the listview
+
     InventoryCursorAdapter mCursorAdapter;
 
     @Override
@@ -31,12 +36,13 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(InventoryActivity.this, InventoryManagementActivity.class);
-                startActivity(intent);
+                Intent fabIntent = new Intent(InventoryActivity.this, InventoryManagementActivity.class);
+                startActivity(fabIntent);
             }
         });
 
         ListView productListView = (ListView) findViewById(R.id.list);
+
         View emptyView = findViewById(R.id.empty_view);
         productListView.setEmptyView(emptyView);
 
@@ -47,8 +53,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(InventoryActivity.this, InventoryManagementActivity.class);
-                Uri currentPetUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
-                intent.setData(currentPetUri);
+                Uri currentProdUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
+                intent.setData(currentProdUri);
                 startActivity(intent);
 
             }
@@ -65,14 +71,14 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         // Gets the database in write mode
 
         // Create a ContentValues object where column names are the keys,
-        // and Toto's pet attributes are the values.
+        // and attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, "World Cup Hoodie");
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE, "Clothes");
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, "10");
-        values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, "0");
-        values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, "1");
-        values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE, "+900000000");
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, "name");
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE, "type");
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, "price");
+        values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, "discount");
+        values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, "quantity");
+        values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE, "phone");
         Uri uri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
     }
 
@@ -102,7 +108,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 InventoryContract.InventoryEntry._ID,
                 InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,
