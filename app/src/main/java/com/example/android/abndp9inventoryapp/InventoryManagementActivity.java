@@ -47,8 +47,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private Spinner mDiscountSpinner;
     private TextView mQuantityView;
     private int mQuantity;
-
-    private EditText mSupplierPhone;
+    private EditText mSupplierPhoneNumber;
     Button sellProduct;
     Button addProduct;
 
@@ -80,12 +79,12 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         sellProduct = (Button) findViewById(R.id.decrease_button);
         addProduct = (Button) findViewById(R.id.increase_button);
         mQuantityView= (TextView) findViewById(R.id.quantity);
-        mSupplierPhone = (EditText) findViewById(R.id.phone);
+        mSupplierPhoneNumber = (EditText) findViewById(R.id.phone);
 
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(13);
 
-        mSupplierPhone.setFilters(filters);
+        mSupplierPhoneNumber.setFilters(filters);
 
         setupSpinner();
         mNameEditText.setOnTouchListener(mTouchListener);
@@ -93,7 +92,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPrice.setOnTouchListener(mTouchListener);
         mStockSpinner.setOnTouchListener(mTouchListener);
         mDiscountSpinner.setOnTouchListener(mTouchListener);
-        mSupplierPhone.setOnTouchListener(mTouchListener);
+        mSupplierPhoneNumber.setOnTouchListener(mTouchListener);
 
 final Button incrementButton = (Button) findViewById(R.id.increase_button);
         incrementButton.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +157,7 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
 
             // Set an intent that makes the user go to the Phone Call
             // when the order is done.
-            String phoneNumber = mSupplierPhone.getText().toString().trim();
+            String phoneNumber = mSupplierPhoneNumber.getText().toString().trim();
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             callIntent.setData(Uri.parse("tel:" + phoneNumber));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
@@ -207,7 +206,7 @@ String nameString = mNameEditText.getText().toString().trim();
     String typeString = mType.getText().toString().trim();
     String priceString = mPrice.getText().toString().trim();
     String quantityString = mQuantityView.getText().toString().trim();
-    String phoneString = mSupplierPhone.getText().toString().trim();
+    String phoneString = mSupplierPhoneNumber.getText().toString().trim();
 
     if (mCurrentProdUri == null &&
             TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
@@ -297,8 +296,9 @@ String[] projection = {
         InventoryEntry.COLUMN_PRODUCT_TYPE,
         InventoryEntry.COLUMN_STOCK,
         InventoryEntry.COLUMN_PRICE,
+        InventoryEntry.COLUMN_QUANTITY,
         InventoryEntry.COLUMN_DISCOUNT,
-InventoryEntry.COLUMN_SUPPLIER_PHONE};
+        InventoryEntry.COLUMN_SUPPLIER_PHONE};
         return new CursorLoader(this,mCurrentProdUri,projection,null,null,null);
 }
 
@@ -316,6 +316,7 @@ InventoryEntry.COLUMN_SUPPLIER_PHONE};
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY);
         int stockColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_STOCK);
+        int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
         int supplierphoneColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_PHONE);
         int discountColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DISCOUNT);
 
@@ -326,11 +327,14 @@ int quantity = cursor.getInt(quantityColumnIndex);
 int stock = cursor.getInt(stockColumnIndex);
 int discount = cursor.getInt(discountColumnIndex);
 int phone = cursor.getInt(supplierphoneColumnIndex);
+int price = cursor.getInt(priceColumnIndex);
 
 mNameEditText.setText(name);
 mType.setText(product);
-mSupplierPhone.setText(phone);
+mSupplierPhoneNumber.setText(Integer.toString(phone));
 mQuantityView.setText(Integer.toString(quantity));
+mPrice.setText(Integer.toString(price));
+
 switch(stock) {
     case InventoryEntry.COLUMN_IN_STOCK:
         mStockSpinner.setSelection(1);
@@ -360,11 +364,12 @@ switch(discount) {
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 mNameEditText.setText("");
-mSupplierPhone.setText("");
+        mSupplierPhoneNumber.setText("");
 mType.setText("");
-mQuantityView.setText("0");
-mDiscountSpinner.setSelection(2);
-mStockSpinner.setSelection(1);
+mPrice.setText("");
+mQuantityView.setText("");
+        mDiscountSpinner.setSelection(2);
+        mStockSpinner.setSelection(1);
         }
 
         private View.OnTouchListener mTouchListener = new View.OnTouchListener() {

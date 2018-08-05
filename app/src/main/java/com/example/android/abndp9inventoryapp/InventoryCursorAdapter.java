@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.example.android.abndp9inventoryapp.data.InventoryContract;
 
+import org.w3c.dom.Text;
+
 /**
  * Created by Efehan on 22.6.2018.
  */
@@ -36,20 +38,29 @@ public class InventoryCursorAdapter extends CursorAdapter {
         TextView name = (TextView) view.findViewById(R.id.name);
         TextView product = (TextView) view.findViewById(R.id.product);
         final TextView quantity = (TextView) view.findViewById(R.id.quantity);
-
+        TextView price = (TextView) view.findViewById(R.id.price);
         Button sellButton = (Button) view.findViewById(R.id.sellProduct);
+        TextView supplierPhone = (TextView) view.findViewById(R.id.phone);
 
         final int idColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
         final int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY);
+        final int priceColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE);
+        final int supplierColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE);
+
 
         String productName = cursor.getString(nameColumnIndex);
         String productType = cursor.getString(productColumnIndex);
+        final int productPrice = Integer.parseInt(cursor.getString(priceColumnIndex));
         final int productQuantity = Integer.parseInt(cursor.getString(quantityColumnIndex));
+        final int phone = Integer.parseInt(cursor.getString(supplierColumnIndex));
+
         name.setText(productName);
         product.setText(productType);
+        price.setText(productPrice);
         quantity.setText("Quantity" + productQuantity);
+        supplierPhone.setText(phone);
 
         if (productQuantity > 0) {
             sellButton.setVisibility(View.VISIBLE);

@@ -76,7 +76,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE, "type");
         values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, "price");
         values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, "discount");
-        values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, "quantity");
+        values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, "stock");
+        values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY,"quantity");
         values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE, "phone");
         Uri uri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
     }
@@ -115,6 +116,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
                 InventoryContract.InventoryEntry.COLUMN_PRICE,
                 InventoryContract.InventoryEntry.COLUMN_STOCK,
                 InventoryContract.InventoryEntry.COLUMN_DISCOUNT,
+                InventoryContract.InventoryEntry.COLUMN_QUANTITY,
                 InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE,
 
         };
