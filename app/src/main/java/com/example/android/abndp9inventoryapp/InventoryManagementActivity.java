@@ -49,8 +49,8 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private int mQuantity;
 
     private EditText mSupplierPhone;
-    ImageButton sellProduct;
-    ImageButton addProduct;
+    Button sellProduct;
+    Button addProduct;
 
 
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
@@ -60,23 +60,25 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventorymanagement);
-        Intent intent = getIntent();
-        mCurrentProdUri = intent.getData();
+
         if(mCurrentProdUri == null) {
             setTitle("Add a product");
             invalidateOptionsMenu();
         }else {
             setTitle("Edit Product");
+            Intent intent = getIntent();
+            mCurrentProdUri = intent.getData();
+            getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
+
         }
-        getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
 
         mNameEditText = (EditText) findViewById(R.id.edit_prod_name);
         mType = (EditText) findViewById(R.id.edit_type);
         mPrice = (EditText) findViewById(R.id.price);
         mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
-        sellProduct = (ImageButton) findViewById(R.id.decrease_button);
-        addProduct = (ImageButton) findViewById(R.id.increase_button);
+        sellProduct = (Button) findViewById(R.id.decrease_button);
+        addProduct = (Button) findViewById(R.id.increase_button);
         mQuantityView= (TextView) findViewById(R.id.quantity);
         mSupplierPhone = (EditText) findViewById(R.id.phone);
 
@@ -93,7 +95,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mDiscountSpinner.setOnTouchListener(mTouchListener);
         mSupplierPhone.setOnTouchListener(mTouchListener);
 
-final ImageButton incrementButton = (ImageButton) findViewById(R.id.increase_button);
+final Button incrementButton = (Button) findViewById(R.id.increase_button);
         incrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +107,7 @@ final ImageButton incrementButton = (ImageButton) findViewById(R.id.increase_but
         });
 
 
-        final ImageButton decrementButton = (ImageButton) findViewById(R.id.decrease_button);
+        final Button decrementButton = (Button) findViewById(R.id.decrease_button);
         decrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

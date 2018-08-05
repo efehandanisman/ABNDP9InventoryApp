@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".InventoryActivity"
     android:orientation="vertical">
 
 
 
     <EditText
+        android:text="Product Name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
          android:id="@+id/edit_prod_name"/>
 
     <EditText
+        android:text="Product Type"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/edit_type"/>
 
     <EditText
+        android:text="Price"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/price"/>
@@ -36,26 +41,31 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:text="Number of Product in Stock"
         android:id="@+id/numberofproduct"/>
 
-    <ImageButton
+    <Button
         android:id="@+id/decrease_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_width="wrap_content"
+        android:text="Decrease Stock"
+        android:layout_height="wrap_content"
+     >
 
-    </ImageButton>
+    </Button>
 
-    <ImageButton
+    <Button
         android:id="@+id/increase_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_width="wrap_content"
+        android:text="Increase Stock"
+        android:layout_height="wrap_content"
+        >
 
-    </ImageButton>
+    </Button>
+
 
     <EditText
         android:layout_width="match_parent"
+        android:text="Supplier Phone"
         android:layout_height="match_parent"
         android:id="@+id/phone"/>
 
