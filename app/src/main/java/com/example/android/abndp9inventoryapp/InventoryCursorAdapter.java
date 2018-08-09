@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import com.example.android.abndp9inventoryapp.data.InventoryContract;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by Efehan on 22.6.2018.
  */
@@ -54,12 +52,12 @@ public class InventoryCursorAdapter extends CursorAdapter {
         String productType = cursor.getString(productColumnIndex);
         final int productPrice = Integer.parseInt(cursor.getString(priceColumnIndex));
         final int productQuantity = Integer.parseInt(cursor.getString(quantityColumnIndex));
-        final int phone = Integer.parseInt(cursor.getString(supplierColumnIndex));
+        String phone = cursor.getString(supplierColumnIndex);
 
         name.setText(productName);
         product.setText(productType);
-        price.setText(productPrice);
-        quantity.setText("Quantity" + productQuantity);
+        price.setText(Integer.toString(productPrice));
+        quantity.setText("Quantity" + Integer.toString(productQuantity));
         supplierPhone.setText(phone);
 
         if (productQuantity > 0) {

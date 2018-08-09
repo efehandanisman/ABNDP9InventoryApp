@@ -50,7 +50,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private EditText mSupplierPhoneNumber;
     Button sellProduct;
     Button addProduct;
-
+    String spinnerName;
 
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
     private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
@@ -76,8 +76,6 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPrice = (EditText) findViewById(R.id.price);
         mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
-        sellProduct = (Button) findViewById(R.id.decrease_button);
-        addProduct = (Button) findViewById(R.id.increase_button);
         mQuantityView= (TextView) findViewById(R.id.quantity);
         mSupplierPhoneNumber = (EditText) findViewById(R.id.phone);
 
@@ -121,10 +119,11 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
         orderNowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Check that fields are not empty
+                if (verifier()) {
+                    // Check that fields are not empty
                     orderNow();
                 }
-
+            }
         });}
 
 
@@ -163,6 +162,48 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
             if (callIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(callIntent);
             }
+        }
+    }
+
+
+    private boolean verifier() {
+
+        String nameString = mNameEditText.getText().toString().trim();
+        String typeString = mType.getText().toString().trim();
+        String priceString = mPrice.getText().toString().trim();
+        String supplierString = mSupplierPhoneNumber.getText().toString().trim();
+        String stockInt = mStockSpinner.getSelectedItem().toString().trim();
+        String discountInt = mDiscountSpinner.getSelectedItem().toString().trim();
+
+
+        if(mStockSpinner != null && mStockSpinner.getSelectedItem() !=null ) {
+            stockInt = (String)mStockSpinner.getSelectedItem();
+        } else  {
+
+        }
+
+        if(mDiscountSpinner != null && mDiscountSpinner.getSelectedItem() !=null ) {
+            discountInt = (String)mDiscountSpinner.getSelectedItem();
+        } else  {
+
+        }
+
+        // Check that all fields in the EditText view are completed
+        // No need to check for negative values of price and quantity because
+        // only positive inputs are possible as specified in activity_editor.xml inputType (is NOT signed)
+        if (TextUtils.isEmpty(nameString) ||
+                TextUtils.isEmpty(typeString) ||
+                TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(supplierString) ||
+                TextUtils.isEmpty(stockInt) ||
+                TextUtils.isEmpty(discountInt)) {
+            Toast.makeText(this, "You did not fill all the fields", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (Double.parseDouble(priceString) == 0) {
+            Toast.makeText(this, "Price can't be 0", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -210,7 +251,7 @@ String nameString = mNameEditText.getText().toString().trim();
 
     if (mCurrentProdUri == null &&
             TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
-            TextUtils.isEmpty(priceString)) {
+            TextUtils.isEmpty(priceString) && TextUtils.isEmpty(phoneString)) {
         finish();
         return;
     }
@@ -263,8 +304,11 @@ if (mCurrentProdUri == null) {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                saveProduct();
-                finish();
+                if(verifier()) {
+
+                    saveProduct();
+                    finish();
+                }
                 return true;
             case R.id.action_delete:
                 showDeleteConfirmationDialog();
@@ -326,12 +370,12 @@ String product = cursor.getString(productColumnIndex);
 int quantity = cursor.getInt(quantityColumnIndex);
 int stock = cursor.getInt(stockColumnIndex);
 int discount = cursor.getInt(discountColumnIndex);
-int phone = cursor.getInt(supplierphoneColumnIndex);
+String phone = cursor.getString(supplierphoneColumnIndex);
 int price = cursor.getInt(priceColumnIndex);
 
 mNameEditText.setText(name);
 mType.setText(product);
-mSupplierPhoneNumber.setText(Integer.toString(phone));
+mSupplierPhoneNumber.setText(phone);
 mQuantityView.setText(Integer.toString(quantity));
 mPrice.setText(Integer.toString(price));
 
@@ -364,7 +408,7 @@ switch(discount) {
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 mNameEditText.setText("");
-        mSupplierPhoneNumber.setText("");
+mSupplierPhoneNumber.setText("");
 mType.setText("");
 mPrice.setText("");
 mQuantityView.setText("");
