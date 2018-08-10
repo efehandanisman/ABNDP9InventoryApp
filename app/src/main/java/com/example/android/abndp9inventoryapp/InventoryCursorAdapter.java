@@ -35,32 +35,26 @@ public class InventoryCursorAdapter extends CursorAdapter {
     public void bindView(View view, final Context context, Cursor cursor) {
         TextView name = (TextView) view.findViewById(R.id.name);
         TextView product = (TextView) view.findViewById(R.id.product);
-        final TextView quantity = (TextView) view.findViewById(R.id.quantity);
-        TextView price = (TextView) view.findViewById(R.id.price);
+        TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
+        TextView priceTextView = (TextView) view.findViewById(R.id.price);
         Button sellButton = (Button) view.findViewById(R.id.sellProduct);
-        TextView supplierPhone = (TextView) view.findViewById(R.id.phone);
 
         final int idColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
-        final int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY);
-        final int priceColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE);
-        final int supplierColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE);
+        final String quantityString = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
+        String priceString = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE));
 
 
         String productName = cursor.getString(nameColumnIndex);
         String productType = cursor.getString(productColumnIndex);
-        final int productPrice = Integer.parseInt(cursor.getString(priceColumnIndex));
-        final int productQuantity = Integer.parseInt(cursor.getString(quantityColumnIndex));
-        String phone = cursor.getString(supplierColumnIndex);
 
         name.setText(productName);
         product.setText(productType);
-        price.setText(Integer.toString(productPrice));
-        quantity.setText("Quantity" + Integer.toString(productQuantity));
-        supplierPhone.setText(phone);
+        priceTextView.setText(priceString);
+        quantityTextView.setText(quantityString);
 
-        if (productQuantity > 0) {
+        if (Integer.parseInt(quantityString) > 0) {
             sellButton.setVisibility(View.VISIBLE);
 
         } else {
@@ -73,7 +67,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
                 Uri quantityUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, idColumnIndex);
                 ContentValues values = new ContentValues();
-                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, productQuantity - 1);
+                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, Integer.parseInt(quantityString) - 1);
                 context.getContentResolver().update(quantityUri, values, null, null);
 
             }
