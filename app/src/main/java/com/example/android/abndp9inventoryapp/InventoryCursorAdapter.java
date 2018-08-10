@@ -42,8 +42,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
         final int idColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
-        final String quantityString = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
-        String priceString = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE));
+        final String quantity = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
+        String price = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE));
 
 
         String productName = cursor.getString(nameColumnIndex);
@@ -51,10 +51,10 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
         name.setText(productName);
         product.setText(productType);
-        priceTextView.setText(priceString);
-        quantityTextView.setText(quantityString);
+        priceTextView.setText(price);
+        quantityTextView.setText(quantity);
 
-        if (Integer.parseInt(quantityString) > 0) {
+        if (Integer.parseInt(quantity) > 0) {
             sellButton.setVisibility(View.VISIBLE);
 
         } else {
@@ -67,7 +67,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
                 Uri quantityUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, idColumnIndex);
                 ContentValues values = new ContentValues();
-                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, Integer.parseInt(quantityString) - 1);
+                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, Integer.parseInt(quantity) - 1);
                 context.getContentResolver().update(quantityUri, values, null, null);
 
             }
