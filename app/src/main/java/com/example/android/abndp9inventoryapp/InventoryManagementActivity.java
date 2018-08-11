@@ -41,32 +41,71 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private Uri mCurrentProdUri;
     private boolean mProdHasChanged = false;
     private EditText mNameEditText;
+    private EditText mPhoneEditText;
     private EditText mType;
     private EditText mPrice;
     private Spinner mStockSpinner;
     private Spinner mDiscountSpinner;
     private TextView mQuantityView;
-    private int mQuantity;
+    private int mQuantity = 0;
+    private int quantityLocal = 0;
+    private String name = "";
+    private int price = 0;
+    private int priceLocal = 0;
+    private String type = "";
+    private String phone = "";
+    private String phoneLocal = "";
     private EditText mSupplierPhoneNumber;
     Button sellProduct;
     Button addProduct;
     String spinnerName;
+    Button increment;
+    Button decrement;
+    Button orderNowButton;
 
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
     private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
+    private static final int PRODUCT_LOADER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventorymanagement);
+        Intent intent = getIntent();
+        mCurrentProdUri = intent.getData();
+
+
+
+        orderNowButton = (Button) findViewById(R.id.order_button);
+        orderNowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (verifier()) {
+                    // Check that fields are not empty
+                    orderNow();
+                }
+
+
+
+
+            }
+
+
+            });
+
 
         if(mCurrentProdUri == null) {
             setTitle("Add a product");
+            orderNowButton.setVisibility(View.GONE);
+            mQuantity = 0;
+            mQuantityView.setText(String.valueOf(mQuantity));
             invalidateOptionsMenu();
         }else {
             setTitle("Edit Product");
-            Intent intent = getIntent();
-            mCurrentProdUri = intent.getData();
+         ;
+            orderNowButton.setVisibility(View.VISIBLE);
+
             getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
 
         }
@@ -104,41 +143,23 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
         });
 
 
-        final Button decrementButton = (Button) findViewById(R.id.decrease_button);
-        decrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // on click quantity decreases
-                decrementButton(v);
-                // display quantity
-                displayQuantity();
-            }
-        });
-
-        final Button orderNowButton = (Button) findViewById(R.id.order_button);
-        orderNowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (verifier()) {
-                    // Check that fields are not empty
-                    orderNow();
+            decrement.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mQuantity--;
+                    displayQuantity();
                 }
-            }
-        });}
 
-
-
-
-    public void decrementButton(View view) {
-        // If quantity = 0 show toast message
-        if (mQuantity == 0) {
-            Toast.makeText(this, "You can't have less than 0 product", Toast.LENGTH_SHORT).show();
-        } else {
-            // If quantity is not 0, decrease quantity
-            mQuantity--;
-            displayQuantity();
+            });
         }
-    }
+
+
+
+
+
+
+
+
 
     public void displayQuantity() {
         TextView quantityView = (TextView) findViewById(R.id.quantity);
@@ -158,7 +179,7 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
             // when the order is done.
             String phoneNumber = mSupplierPhoneNumber.getText().toString().trim();
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
-            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+            callIntent.setData(Uri.parse("Phone:" + phoneNumber));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(callIntent);
             }
