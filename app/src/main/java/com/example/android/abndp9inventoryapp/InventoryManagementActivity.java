@@ -48,14 +48,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private Spinner mDiscountSpinner;
     private TextView mQuantityView;
     private int mQuantity = 0;
-    private int quantityLocal = 0;
-    private String name = "";
-    private int price = 0;
-    private int priceLocal = 0;
-    private String type = "";
-    private String phone = "";
-    private String phoneLocal = "";
-    private EditText mSupplierPhoneNumber;
+
     Button sellProduct;
     Button addProduct;
     String spinnerName;
@@ -99,11 +92,9 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
             setTitle("Add a product");
             orderNowButton.setVisibility(View.GONE);
             mQuantity = 0;
-            mQuantityView.setText(String.valueOf(mQuantity));
             invalidateOptionsMenu();
         }else {
             setTitle("Edit Product");
-         ;
             orderNowButton.setVisibility(View.VISIBLE);
 
             getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
@@ -116,12 +107,12 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
         mQuantityView= (TextView) findViewById(R.id.quantity);
-        mSupplierPhoneNumber = (EditText) findViewById(R.id.phone);
+        mPhoneEditText = (EditText) findViewById(R.id.phone);
 
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(13);
 
-        mSupplierPhoneNumber.setFilters(filters);
+        mPhoneEditText.setFilters(filters);
 
         setupSpinner();
         mNameEditText.setOnTouchListener(mTouchListener);
@@ -129,10 +120,11 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPrice.setOnTouchListener(mTouchListener);
         mStockSpinner.setOnTouchListener(mTouchListener);
         mDiscountSpinner.setOnTouchListener(mTouchListener);
-        mSupplierPhoneNumber.setOnTouchListener(mTouchListener);
+        mPhoneEditText.setOnTouchListener(mTouchListener);
 
-final Button incrementButton = (Button) findViewById(R.id.increase_button);
-        incrementButton.setOnClickListener(new View.OnClickListener() {
+final Button increment = (Button) findViewById(R.id.increase_button);
+
+        increment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // On click quantity increases
@@ -142,19 +134,21 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
             }
         });
 
+        final Button decrement = (Button) findViewById(R.id.decrease_button);
 
             decrement.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mQuantity--;
-                    displayQuantity();
-                }
+                    if ( mQuantity > 0){
+                        mQuantity--;
+                        displayQuantity();
+
+
+
+                    }    }
 
             });
         }
-
-
-
 
 
 
@@ -177,7 +171,7 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
 
             // Set an intent that makes the user go to the Phone Call
             // when the order is done.
-            String phoneNumber = mSupplierPhoneNumber.getText().toString().trim();
+            String phoneNumber = mPhoneEditText.getText().toString().trim();
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             callIntent.setData(Uri.parse("Phone:" + phoneNumber));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
@@ -192,15 +186,13 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
         String nameString = mNameEditText.getText().toString().trim();
         String typeString = mType.getText().toString().trim();
         String priceString = mPrice.getText().toString().trim();
-        String supplierString = mSupplierPhoneNumber.getText().toString().trim();
+        String supplierString = mPhoneEditText.getText().toString().trim();
         String stockInt = mStockSpinner.getSelectedItem().toString().trim();
         String discountInt = mDiscountSpinner.getSelectedItem().toString().trim();
-
-
+        String phoneString = mPhoneEditText.getText().toString().trim();
         if(mStockSpinner != null && mStockSpinner.getSelectedItem() !=null ) {
             stockInt = (String)mStockSpinner.getSelectedItem();
         } else  {
-
         }
 
         if(mDiscountSpinner != null && mDiscountSpinner.getSelectedItem() !=null ) {
@@ -208,6 +200,8 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
         } else  {
 
         }
+
+
 
         // Check that all fields in the EditText view are completed
         // No need to check for negative values of price and quantity because
@@ -217,6 +211,7 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
                 TextUtils.isEmpty(priceString) ||
                 TextUtils.isEmpty(supplierString) ||
                 TextUtils.isEmpty(stockInt) ||
+                TextUtils.isEmpty(phoneString) ||
                 TextUtils.isEmpty(discountInt)) {
             Toast.makeText(this, "You did not fill all the fields", Toast.LENGTH_SHORT).show();
             return false;
@@ -234,12 +229,15 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
         // the spinner will use the default layout
         ArrayAdapter stockSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_stock_options, android.R.layout.simple_spinner_item);
-
+        ArrayAdapter discountSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.array_stock_options, android.R.layout.simple_spinner_item);
         // Specify dropdown layout style - simple list view with 1 item per line
         stockSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+   discountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
         mStockSpinner.setAdapter(stockSpinnerAdapter);
+        mDiscountSpinner.setAdapter(discountSpinnerAdapter);
 
         // Set the integer mSelected to the constant values
         mStockSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -253,6 +251,8 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
                         mStock = InventoryContract.InventoryEntry.COLUMN_OUTOF_STOCK; // OUT OF STOCK
                     }
                 }
+
+
             }
 
             @Override
@@ -261,14 +261,18 @@ final Button incrementButton = (Button) findViewById(R.id.increase_button);
             }
         });
 
-}
+
+        }
+
+
 
 private void saveProduct() {
 String nameString = mNameEditText.getText().toString().trim();
     String typeString = mType.getText().toString().trim();
     String priceString = mPrice.getText().toString().trim();
     String quantityString = mQuantityView.getText().toString().trim();
-    String phoneString = mSupplierPhoneNumber.getText().toString().trim();
+    String phoneString = mPhoneEditText.getText().toString().trim();
+
 
     if (mCurrentProdUri == null &&
             TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
@@ -396,9 +400,9 @@ int price = cursor.getInt(priceColumnIndex);
 
 mNameEditText.setText(name);
 mType.setText(product);
-mSupplierPhoneNumber.setText(phone);
-mQuantityView.setText(Integer.toString(quantity));
-mPrice.setText(Integer.toString(price));
+mPhoneEditText.setText(phone);
+mQuantityView.setText(quantity);
+mPrice.setText(price);
 
 switch(stock) {
     case InventoryEntry.COLUMN_IN_STOCK:
@@ -429,7 +433,7 @@ switch(discount) {
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 mNameEditText.setText("");
-mSupplierPhoneNumber.setText("");
+mPhoneEditText.setText("");
 mType.setText("");
 mPrice.setText("");
 mQuantityView.setText("");
