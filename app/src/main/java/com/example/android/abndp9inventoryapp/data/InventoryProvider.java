@@ -76,7 +76,7 @@ public class InventoryProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch(match) {
             case INVENTORY:
-            return saveProduct(uri,contentValues);
+                return saveProduct(uri,contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -94,19 +94,19 @@ public class InventoryProvider extends ContentProvider {
 
 
 
-        Integer stock = values.getAsInteger(COLUMN_STOCK);
-        if(!StockStatus(stock)) {
+        Integer Prodstock = values.getAsInteger(COLUMN_STOCK);
+        if(!StockStatus(Prodstock)) {
             throw new IllegalArgumentException("You need to let us know whether we have this product or not");
 
         }
 
-        Integer quantity = values.getAsInteger(COLUMN_QUANTITY);
-        if(quantity < 0 || quantity == null) {
+        Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
+        if(Prodquantity < 0 || Prodquantity == null) {
             throw new IllegalArgumentException("You can not have negative # of products");
         }
 
-        Integer price = values.getAsInteger(COLUMN_PRICE);
-        if(price <= 0 || price == null) {
+        Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
+        if(Prodprice <= 0 || Prodprice == null) {
             throw new IllegalArgumentException("Someone needs to pay the bills, you can not give away products for free");
         }
 
@@ -151,15 +151,15 @@ public class InventoryProvider extends ContentProvider {
         }
 
         if (values.containsKey(COLUMN_PRICE)) {
-            Integer price = values.getAsInteger(COLUMN_PRICE);
-            if (price <= 0 || price == null) {
+            Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
+            if (Prodprice <= 0 || Prodprice == null) {
                 throw new IllegalArgumentException("Product requires a valid price");
             }
         }
 
         if (values.containsKey(COLUMN_QUANTITY)) {
-            Integer quantity = values.getAsInteger(COLUMN_QUANTITY);
-            if (quantity <= 0 || quantity == null) {
+            Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
+            if (Prodquantity <= 0 || Prodquantity == null) {
                 throw new IllegalArgumentException("Product requires a valid quantity");
             }
         }

@@ -215,9 +215,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
                 TextUtils.isEmpty(discountInt)) {
             Toast.makeText(this, "You did not fill all the fields", Toast.LENGTH_SHORT).show();
             return false;
-        } else if (Double.parseDouble(priceString) == 0) {
-            Toast.makeText(this, "Price can't be 0", Toast.LENGTH_SHORT).show();
-            return false;
         } else {
             return true;
         }
@@ -230,7 +227,7 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         ArrayAdapter stockSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_stock_options, android.R.layout.simple_spinner_item);
         ArrayAdapter discountSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_stock_options, android.R.layout.simple_spinner_item);
+                R.array.array_discount_options, android.R.layout.simple_spinner_item);
         // Specify dropdown layout style - simple list view with 1 item per line
         stockSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
    discountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);

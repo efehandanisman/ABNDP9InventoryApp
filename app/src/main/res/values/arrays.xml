@@ -5,4 +5,9 @@
         <item>@string/in_stock</item>
         <item>@string/out_stock</item>
     </string-array>
+
+    <string-array name="array_discount_options">
+        <item>@string/in_discount</item>
+        <item>@string/no_discount</item>
+    </string-array>
 </resources>

@@ -18,5 +18,8 @@
     <string name="inventory_activity"> In Stock </string>
     <string name="out_stock"> Out of Stock </string>
 
+    <string name="in_discount"> In Discount </string>
+    <string name="no_discount"> No Discount </string>
+
 
 </resources>
