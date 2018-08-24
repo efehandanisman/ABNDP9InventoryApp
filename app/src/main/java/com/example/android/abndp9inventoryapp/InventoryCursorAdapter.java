@@ -55,7 +55,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
             public void onClick(View v) {
 
                 InventoryActivity Activity = (InventoryActivity) context;
-                Activity.sale(Integer.valueOf(columnIdIndex), Integer.valueOf(quantity));
+                Activity.sale(Integer.valueOf(columnIdIndex), quantity);
             }
         });
         name.setText(productName);

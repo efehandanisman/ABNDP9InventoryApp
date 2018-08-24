@@ -78,9 +78,10 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     }
 
     // Taken from https://github.com/Muneera-Salah/Inventory-App-Stage-2/blob/master/app/src/main/java/com/example/anrdoid/inventoryappstage2/InventoryActivity.java
-    public void sale(int productID, int mQuantity) {
-        mQuantity = mQuantity - 1;
-        if (mQuantity >= 0) {
+    public void sale(int productID, String mQuantity) {
+        Integer quantity = Integer.parseInt(mQuantity);
+        quantity = quantity - 1;
+        if (quantity > 0) {
             ContentValues values = new ContentValues();
             values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, mQuantity);
             Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, productID);
