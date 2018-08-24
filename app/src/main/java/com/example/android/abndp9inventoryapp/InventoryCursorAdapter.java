@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,9 +38,9 @@ public class InventoryCursorAdapter extends CursorAdapter {
         TextView product = (TextView) view.findViewById(R.id.product);
         TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
-        Button sellButton = (Button) view.findViewById(R.id.sellProduct);
+        final Button sellButton = (Button) view.findViewById(R.id.sellProduct);
 
-        final int idColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
+        final int columnIdIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
         int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
         final String quantity = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
@@ -49,6 +50,14 @@ public class InventoryCursorAdapter extends CursorAdapter {
         String productName = cursor.getString(nameColumnIndex);
         String productType = cursor.getString(productColumnIndex);
 
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                InventoryActivity Activity = (InventoryActivity) context;
+                Activity.sale(Integer.valueOf(columnIdIndex), Integer.valueOf(quantity));
+            }
+        });
         name.setText(productName);
         product.setText(productType);
         priceTextView.setText(price);
@@ -60,17 +69,9 @@ public class InventoryCursorAdapter extends CursorAdapter {
         } else {
             sellButton.setVisibility(View.GONE);
         }
-        sellButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Another one sold!", Toast.LENGTH_SHORT).show();
 
-                Uri quantityUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, idColumnIndex);
-                ContentValues values = new ContentValues();
-                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, Integer.parseInt(quantity) - 1);
-                context.getContentResolver().update(quantityUri, values, null, null);
 
-            }
-        });
+
+
+        }
     }
-}

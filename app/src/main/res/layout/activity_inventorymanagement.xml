@@ -38,11 +38,7 @@
         android:id="@+id/spinner_discount">
     </Spinner>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Number of Product in Stock"
-        android:id="@+id/numberofproduct"/>
+
 
     <Button
         android:id="@+id/decrease_button"

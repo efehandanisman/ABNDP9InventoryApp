@@ -1,6 +1,8 @@
 package com.example.android.abndp9inventoryapp.data;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry;
@@ -30,4 +32,43 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+
+    public Cursor readStock() {
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                InventoryContract.InventoryEntry._ID,
+                InventoryEntry.COLUMN_PRODUCT_TYPE,
+                InventoryEntry.COLUMN_PRODUCT_NAME,
+                InventoryContract.InventoryEntry.COLUMN_PRICE,
+                InventoryContract.InventoryEntry.COLUMN_QUANTITY,
+                InventoryEntry.COLUMN_STOCK,
+                InventoryEntry.COLUMN_DISCOUNT,
+                InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE,
+        };
+        Cursor cursor = db.query(
+                InventoryEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        return cursor;
+    }
+
+    public void sellOneItem(long itemId, int quantity) {
+        SQLiteDatabase db = getWritableDatabase();
+        int newQuantity = 0;
+        if (quantity > 0) {
+            newQuantity = quantity -1;
+        }
+        ContentValues values = new ContentValues();
+        values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
+        String selection = InventoryEntry._ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(itemId) };
+        db.update(InventoryEntry.TABLE_NAME,
+                values, selection, selectionArgs);
+    }
+
 }

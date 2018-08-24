@@ -50,10 +50,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private int mQuantity = 0;
 
     Button sellProduct;
-    Button addProduct;
-    String spinnerName;
-    Button increment;
-    Button decrement;
+
     Button orderNowButton;
 
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
@@ -121,6 +118,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mStockSpinner.setOnTouchListener(mTouchListener);
         mDiscountSpinner.setOnTouchListener(mTouchListener);
         mPhoneEditText.setOnTouchListener(mTouchListener);
+        mQuantityView.setOnTouchListener(mTouchListener);
 
 final Button increment = (Button) findViewById(R.id.increase_button);
 

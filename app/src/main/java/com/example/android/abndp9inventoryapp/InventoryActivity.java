@@ -15,9 +15,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import com.example.android.abndp9inventoryapp.data.InventoryContract;
+import com.example.android.abndp9inventoryapp.data.InventoryDbHelper;
+
 import android.support.design.widget.FloatingActionButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -27,6 +32,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     //Adapter of the listview
 
     InventoryCursorAdapter mCursorAdapter;
+    InventoryDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +68,29 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         getLoaderManager().initLoader(PROD_LOADER, null, this);
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
     }
+
+    // Taken from https://github.com/Muneera-Salah/Inventory-App-Stage-2/blob/master/app/src/main/java/com/example/anrdoid/inventoryappstage2/InventoryActivity.java
+    public void sale(int productID, int productQuantity) {
+        productQuantity = productQuantity - 1;
+        if (productQuantity >= 0) {
+            ContentValues values = new ContentValues();
+            values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, productQuantity);
+            Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, productID);
+            int rowsAffected = getContentResolver().update(updateUri, values, null, null);
+            Toast.makeText(this, "Quantity was change", Toast.LENGTH_SHORT).show();
+
+            Log.d("Log msg", "rowsAffected " + rowsAffected + " - productID " + productID + " - quantity " + productQuantity + " , decreaseCount has been called.");
+        } else {
+            Toast.makeText(this, "Product was finish :( , buy another Product", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void saveProduct() {
 
@@ -139,6 +164,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         int rowsDeleted = getContentResolver().delete(InventoryContract.InventoryEntry.CONTENT_URI, null, null);
         Log.v("CatalogActivity", rowsDeleted + " rows deleted from database");
     }
+
 
 
 }

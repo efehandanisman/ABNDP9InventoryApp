@@ -143,7 +143,7 @@ public class InventoryProvider extends ContentProvider {
 
     }
     private int updateInventory(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        if (values.containsKey(COLUMN_PRODUCT_NAME)) {
+            if (values.containsKey(COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(COLUMN_PRODUCT_NAME);
             if (name == null) {
                 throw new IllegalArgumentException("Product requires a name");
@@ -225,7 +225,6 @@ public class InventoryProvider extends ContentProvider {
         // Return the number of rows deleted
         return rowsDeleted;
     }
-
 
 
 }
