@@ -49,7 +49,6 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private TextView mQuantityView;
     private int mQuantity = 0;
 
-    Button sellProduct;
 
     Button orderNowButton;
 
@@ -87,7 +86,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
 
         if(mCurrentProdUri == null) {
             setTitle("Add a product");
-            orderNowButton.setVisibility(View.GONE);
+            orderNowButton.setVisibility(View.VISIBLE);
             mQuantity = 0;
             invalidateOptionsMenu();
         }else {
@@ -164,7 +163,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
             Toast.makeText(this, "Quantity is required", Toast.LENGTH_SHORT).show();
 
         } else {
-            // Else display toast message
             Toast.makeText(this, "Products have been successfully ordered", Toast.LENGTH_SHORT).show();
 
             // Set an intent that makes the user go to the Phone Call
@@ -174,6 +172,9 @@ final Button increment = (Button) findViewById(R.id.increase_button);
             callIntent.setData(Uri.parse("Phone:" + phoneNumber));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(callIntent);
+
+
+
             }
         }
     }
@@ -184,7 +185,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         String nameString = mNameEditText.getText().toString().trim();
         String typeString = mType.getText().toString().trim();
         String priceString = mPrice.getText().toString().trim();
-        String supplierString = mPhoneEditText.getText().toString().trim();
         String stockInt = mStockSpinner.getSelectedItem().toString().trim();
         String discountInt = mDiscountSpinner.getSelectedItem().toString().trim();
         String phoneString = mPhoneEditText.getText().toString().trim();
@@ -207,7 +207,7 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         if (TextUtils.isEmpty(nameString) ||
                 TextUtils.isEmpty(typeString) ||
                 TextUtils.isEmpty(priceString) ||
-                TextUtils.isEmpty(supplierString) ||
+                TextUtils.isEmpty(phoneString) ||
                 TextUtils.isEmpty(stockInt) ||
                 TextUtils.isEmpty(phoneString) ||
                 TextUtils.isEmpty(discountInt)) {

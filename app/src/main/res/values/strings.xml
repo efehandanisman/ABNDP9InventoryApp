@@ -15,7 +15,7 @@
     <string name="update_prod_succeed">Product successfully updated </string>
     <string name="in_stock"> In Stock </string>
 
-    <string name="inventory_activity"> In Stock </string>
+    <string name="inventory_activity"> Inventory </string>
     <string name="out_stock"> Out of Stock </string>
 
     <string name="in_discount"> In Discount </string>

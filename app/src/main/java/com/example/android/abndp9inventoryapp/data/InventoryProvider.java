@@ -16,6 +16,7 @@ import static com.example.android.abndp9inventoryapp.data.InventoryContract.Inve
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_QUANTITY;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_STOCK;
+import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.DiscountStatus;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.StockStatus;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.TABLE_NAME;
@@ -110,6 +111,12 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Someone needs to pay the bills, you can not give away products for free");
         }
 
+Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
+        if(Suppphone == null) {
+            throw new IllegalArgumentException("Who you gonna call?");
+
+        }
+
 
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         long id = database.insert(TABLE_NAME, null, values);
@@ -154,6 +161,13 @@ public class InventoryProvider extends ContentProvider {
             Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
             if (Prodprice <= 0 || Prodprice == null) {
                 throw new IllegalArgumentException("Product requires a valid price");
+            }
+        }
+
+        if (values.containsKey(COLUMN_SUPPLIER_PHONE)) {
+            Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
+            if (Suppphone == null) {
+                throw new IllegalArgumentException("Who you gonna call?");
             }
         }
 

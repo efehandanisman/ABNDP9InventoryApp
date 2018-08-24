@@ -49,5 +49,15 @@
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="#AEB6BD"  />
 
+    <TextView
+        android:id="@+id/phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="#AEB6BD"  />
+
+
+
 
 </LinearLayout>
