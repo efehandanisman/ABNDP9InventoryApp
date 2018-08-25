@@ -97,7 +97,7 @@ public class InventoryProvider extends ContentProvider {
 
 
         Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
-        if(Prodquantity < 0 || Prodquantity == null) {
+        if(Prodquantity < 0 || Prodquantity == null ) {
             Toast.makeText(getContext(),"You need a valid number of quantity", Toast.LENGTH_SHORT);
         }
 

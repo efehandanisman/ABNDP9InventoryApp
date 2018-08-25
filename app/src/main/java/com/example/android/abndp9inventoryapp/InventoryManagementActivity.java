@@ -54,7 +54,6 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
 
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
     private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
-    private static final int PRODUCT_LOADER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +62,6 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         setContentView(R.layout.activity_inventorymanagement);
         Intent intent = getIntent();
         mCurrentProdUri = intent.getData();
-
-
 
         orderNowButton = (Button) findViewById(R.id.order_button);
         orderNowButton.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +89,6 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         }else {
             setTitle("Edit Product");
             orderNowButton.setVisibility(View.VISIBLE);
-
             getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
 
         }
@@ -163,13 +159,12 @@ final Button increment = (Button) findViewById(R.id.increase_button);
             Toast.makeText(this, "Quantity is required", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(this, "Products have been successfully ordered", Toast.LENGTH_SHORT).show();
-
+            if (verifier());
             // Set an intent that makes the user go to the Phone Call
             // when the order is done.
+            Toast.makeText(this, "Products have been successfully ordered", Toast.LENGTH_SHORT).show();
             String phoneNumber = mPhoneEditText.getText().toString().trim();
-            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-            callIntent.setData(Uri.parse("Phone:" + phoneNumber));
+            Intent callIntent = new Intent(Intent.ACTION_DIAL,Uri.fromParts("tel", phoneNumber, null));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(callIntent);
 
@@ -375,7 +370,7 @@ String[] projection = {
         // Extract out the value from the Cursor for the given column index
 String name = cursor.getString(nameColumnIndex);
 String product = cursor.getString(productColumnIndex);
-int quantity = cursor.getInt(quantityColumnIndex);
+final int quantity = cursor.getInt(quantityColumnIndex);
 int stock = cursor.getInt(stockColumnIndex);
 int discount = cursor.getInt(discountColumnIndex);
 String phone = cursor.getString(supplierphoneColumnIndex);
@@ -384,8 +379,8 @@ int price = cursor.getInt(priceColumnIndex);
 mNameEditText.setText(name);
 mType.setText(product);
 mPhoneEditText.setText(phone);
-mQuantityView.setText(quantity);
-mPrice.setText(price);
+mQuantityView.setText(Integer.toString(quantity));
+mPrice.setText(Integer.toString(price));
 
 switch(stock) {
     case InventoryEntry.COLUMN_IN_STOCK:
