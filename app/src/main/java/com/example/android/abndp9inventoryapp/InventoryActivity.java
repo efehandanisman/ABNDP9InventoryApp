@@ -8,21 +8,17 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import com.example.android.abndp9inventoryapp.data.InventoryContract;
-import com.example.android.abndp9inventoryapp.data.InventoryDbHelper;
 
-import android.support.design.widget.FloatingActionButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.example.android.abndp9inventoryapp.data.InventoryContract;
 
 public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -30,9 +26,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     private static final int PROD_LOADER = 0;
 
     //Adapter of the listview
-
     InventoryCursorAdapter mCursorAdapter;
-    String mQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +40,6 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
                 startActivity(fabIntent);
             }
         });
-
 
 
         ListView productListView = (ListView) findViewById(R.id.list);
@@ -89,7 +82,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, "price");
         values.put(InventoryContract.InventoryEntry.COLUMN_DISCOUNT, "discount");
         values.put(InventoryContract.InventoryEntry.COLUMN_STOCK, "stock");
-        values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY,"quantity");
+        values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, "quantity");
         values.put(InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE, "phone");
         Uri uri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
     }
@@ -101,6 +94,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         getMenuInflater().inflate(R.menu.menu_inventoryactivity, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
@@ -150,7 +144,6 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         int rowsDeleted = getContentResolver().delete(InventoryContract.InventoryEntry.CONTENT_URI, null, null);
         Log.v("CatalogActivity", rowsDeleted + " rows deleted from database");
     }
-
 
 
 }

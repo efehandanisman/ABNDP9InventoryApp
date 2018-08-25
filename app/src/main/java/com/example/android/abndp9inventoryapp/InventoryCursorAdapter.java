@@ -4,16 +4,13 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.abndp9inventoryapp.data.InventoryContract;
 
@@ -56,17 +53,20 @@ public class InventoryCursorAdapter extends CursorAdapter {
         priceTextView.setText(price);
         quantityTextView.setText(quantity);
 
+
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             // when sale is pressed - the quantity get -1
-            int quantityInt = Integer.parseInt(quantity) - 1 ;
-             ContentValues values = new ContentValues();
+                // when sale is pressed - the quantity get -1
+                int quantityInt = Integer.parseInt(quantity) - 1;
+                ContentValues values = new ContentValues();
                 values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, quantityInt);
                 Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, columnIdIndex);
                 context.getContentResolver().update(updateUri, values, null, null);
 
             }
+
+
         });
 
         if (Integer.parseInt(quantity) > 0) {
@@ -79,6 +79,4 @@ public class InventoryCursorAdapter extends CursorAdapter {
     }
 
 
-
-
-    }
+}

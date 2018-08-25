@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry;
 
 /**
@@ -16,7 +17,10 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "inventory.db";
 
-    public InventoryDbHelper(Context context) { super(context, DATABASE_NAME,null,DATABASE_VERSION); }
+    public InventoryDbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
     public void onCreate(SQLiteDatabase db) {
         String SQL_CREATE_ENTRIES = "CREATE TABLE " + InventoryEntry.TABLE_NAME + " ("
                 + InventoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -26,10 +30,11 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
                 + InventoryEntry.COLUMN_STOCK + " INTEGER NOT NULL, "
                 + InventoryEntry.COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
                 + InventoryEntry.COLUMN_DISCOUNT + " INTEGER NOT NULL, "
-                + InventoryEntry.COLUMN_SUPPLIER_PHONE + " TEXT NOT NULL);" ;
+                + InventoryEntry.COLUMN_SUPPLIER_PHONE + " TEXT NOT NULL);";
 
         db.execSQL(SQL_CREATE_ENTRIES);
     }
+
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
@@ -61,12 +66,12 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         int newQuantity = 0;
         if (quantity > 0) {
-            newQuantity = quantity -1;
+            newQuantity = quantity - 1;
         }
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_QUANTITY, newQuantity);
         String selection = InventoryEntry._ID + "=?";
-        String[] selectionArgs = new String[] { String.valueOf(itemId) };
+        String[] selectionArgs = new String[]{String.valueOf(itemId)};
         db.update(InventoryEntry.TABLE_NAME,
                 values, selection, selectionArgs);
     }

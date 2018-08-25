@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -23,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +35,9 @@ import com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEn
 
 public class InventoryManagementActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String PRODUCT_UPDATED = "Product updated";
     private final static int EXISTING_PROD_LOADER = 0;
+    Button orderNowButton;
     private Uri mCurrentProdUri;
     private boolean mProdHasChanged = false;
     private EditText mNameEditText;
@@ -48,12 +48,15 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
     private Spinner mDiscountSpinner;
     private TextView mQuantityView;
     private int mQuantity = 0;
-
-
-    Button orderNowButton;
-
     private int mStock = InventoryContract.InventoryEntry.COLUMN_IN_STOCK;
     private int mDiscount = InventoryContract.InventoryEntry.COLUMN_NO_DISCOUNT;
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mProdHasChanged = true;
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         setContentView(R.layout.activity_inventorymanagement);
         Intent intent = getIntent();
         mCurrentProdUri = intent.getData();
+        Button deleteProdButton = (Button) findViewById(R.id.delete_prod);
 
         orderNowButton = (Button) findViewById(R.id.order_button);
         orderNowButton.setOnClickListener(new View.OnClickListener() {
@@ -73,24 +77,23 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
                 }
 
 
-
-
             }
 
 
-            });
+        });
 
 
-        if(mCurrentProdUri == null) {
+        if (mCurrentProdUri == null) {
             setTitle("Add a product");
             orderNowButton.setVisibility(View.VISIBLE);
+            deleteProdButton.setVisibility(View.GONE);
             mQuantity = 0;
             invalidateOptionsMenu();
-        }else {
+        } else {
             setTitle("Edit Product");
             orderNowButton.setVisibility(View.VISIBLE);
-            getLoaderManager().initLoader(EXISTING_PROD_LOADER,null,this);
-
+            getLoaderManager().initLoader(EXISTING_PROD_LOADER, null, this);
+            deleteProdButton.setVisibility(View.VISIBLE);
         }
 
         mNameEditText = (EditText) findViewById(R.id.edit_prod_name);
@@ -98,7 +101,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPrice = (EditText) findViewById(R.id.price);
         mStockSpinner = (Spinner) findViewById(R.id.spinner_stock);
         mDiscountSpinner = (Spinner) findViewById(R.id.spinner_discount);
-        mQuantityView= (TextView) findViewById(R.id.quantity);
+        mQuantityView = (TextView) findViewById(R.id.quantity);
         mPhoneEditText = (EditText) findViewById(R.id.phone);
 
         InputFilter[] filters = new InputFilter[1];
@@ -115,7 +118,7 @@ public class InventoryManagementActivity extends AppCompatActivity implements Lo
         mPhoneEditText.setOnTouchListener(mTouchListener);
         mQuantityView.setOnTouchListener(mTouchListener);
 
-final Button increment = (Button) findViewById(R.id.increase_button);
+        final Button increment = (Button) findViewById(R.id.increase_button);
 
         increment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,24 +132,27 @@ final Button increment = (Button) findViewById(R.id.increase_button);
 
         final Button decrement = (Button) findViewById(R.id.decrease_button);
 
-            decrement.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if ( mQuantity > 0){
-                        mQuantity--;
-                        displayQuantity();
+        decrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mQuantity > 0) {
+                    mQuantity--;
+                    displayQuantity();
 
 
+                }
+            }
 
-                    }    }
+        });
 
-            });
-        }
+        deleteProdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
 
-
-
-
-
+            }
+        });
+    }
 
     public void displayQuantity() {
         TextView quantityView = (TextView) findViewById(R.id.quantity);
@@ -159,21 +165,19 @@ final Button increment = (Button) findViewById(R.id.increase_button);
             Toast.makeText(this, "Quantity is required", Toast.LENGTH_SHORT).show();
 
         } else {
-            if (verifier());
+            if (verifier()) ;
             // Set an intent that makes the user go to the Phone Call
             // when the order is done.
             Toast.makeText(this, "Products have been successfully ordered", Toast.LENGTH_SHORT).show();
             String phoneNumber = mPhoneEditText.getText().toString().trim();
-            Intent callIntent = new Intent(Intent.ACTION_DIAL,Uri.fromParts("tel", phoneNumber, null));
+            Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
             if (callIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(callIntent);
-
 
 
             }
         }
     }
-
 
     private boolean verifier() {
 
@@ -181,9 +185,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         String typeString = mType.getText().toString().trim();
         String priceString = mPrice.getText().toString().trim();
         String phoneString = mPhoneEditText.getText().toString().trim();
-
-
-
 
 
         // Check that all fields in the EditText view are completed
@@ -201,7 +202,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         }
     }
 
-
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
@@ -211,7 +211,7 @@ final Button increment = (Button) findViewById(R.id.increase_button);
                 R.array.array_discount_options, android.R.layout.simple_spinner_item);
         // Specify dropdown layout style - simple list view with 1 item per line
         stockSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-   discountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        discountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
         mStockSpinner.setAdapter(stockSpinnerAdapter);
@@ -240,58 +240,57 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         });
 
 
+    }
+
+    private void saveProduct() {
+        String nameString = mNameEditText.getText().toString().trim();
+        String typeString = mType.getText().toString().trim();
+        String priceString = mPrice.getText().toString().trim();
+        String quantityString = mQuantityView.getText().toString().trim();
+        String phoneString = mPhoneEditText.getText().toString().trim();
+
+
+        if (mCurrentProdUri == null &&
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
+                TextUtils.isEmpty(priceString) && TextUtils.isEmpty(phoneString)) {
+            finish();
+            return;
+        }
+        ContentValues values = new ContentValues();
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE, typeString);
+        values.put(InventoryEntry.COLUMN_PRICE, priceString);
+        values.put(InventoryEntry.COLUMN_QUANTITY, quantityString);
+        values.put(InventoryEntry.COLUMN_SUPPLIER_PHONE, phoneString);
+        values.put(InventoryEntry.COLUMN_DISCOUNT, mDiscount);
+        values.put(InventoryEntry.COLUMN_STOCK, mStock);
+
+
+        if (mCurrentProdUri == null) {
+
+            Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
+            if (newUri == null) {
+                Toast.makeText(this, "Product can not be saved", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, PRODUCT_UPDATED, Toast.LENGTH_SHORT).show();
+
+            }
+        } else {
+            int rowsAffected = getContentResolver().update(mCurrentProdUri, values, null, null);
+            if (rowsAffected == 0) {
+                // If no rows were affected, then there was an error with the update.
+                Toast.makeText(this, getString(R.string.update_prod_failed),
+                        Toast.LENGTH_SHORT).show();
+
+            } else {
+                // Otherwise, the update was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.update_prod_succeed),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
 
-
-
-private void saveProduct() {
-String nameString = mNameEditText.getText().toString().trim();
-    String typeString = mType.getText().toString().trim();
-    String priceString = mPrice.getText().toString().trim();
-    String quantityString = mQuantityView.getText().toString().trim();
-    String phoneString = mPhoneEditText.getText().toString().trim();
-
-
-    if (mCurrentProdUri == null &&
-            TextUtils.isEmpty(nameString) && TextUtils.isEmpty(typeString) &&
-            TextUtils.isEmpty(priceString) && TextUtils.isEmpty(phoneString)) {
-        finish();
-        return;
     }
-    ContentValues values = new ContentValues();
-values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,nameString);
-values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE,typeString);
-values.put(InventoryEntry.COLUMN_PRICE,priceString);
-    values.put(InventoryEntry.COLUMN_QUANTITY,quantityString);
-    values.put(InventoryEntry.COLUMN_SUPPLIER_PHONE,phoneString);
-    values.put(InventoryEntry.COLUMN_DISCOUNT,mDiscount);
-    values.put(InventoryEntry.COLUMN_STOCK,mStock);
 
-
-if (mCurrentProdUri == null) {
-
-    Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,values);
-    if (newUri == null) {
-        Toast.makeText(this, "Product can not be saved", Toast.LENGTH_SHORT).show();
-    }else{
-        Toast.makeText(this,"Product updated",Toast.LENGTH_SHORT).show();
-
-    }
-} else {
-    int rowsAffected = getContentResolver().update(mCurrentProdUri, values, null, null);
-    if (rowsAffected == 0) {
-        // If no rows were affected, then there was an error with the update.
-        Toast.makeText(this, getString(R.string.update_prod_failed),
-                Toast.LENGTH_SHORT).show();
-
-    } else {
-        // Otherwise, the update was successful and we can display a toast.
-        Toast.makeText(this, getString(R.string.update_prod_succeed),
-                Toast.LENGTH_SHORT).show();
-    }
-}
-
-}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
@@ -307,7 +306,7 @@ if (mCurrentProdUri == null) {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                if(verifier()) {
+                if (verifier()) {
 
                     saveProduct();
                     finish();
@@ -315,9 +314,9 @@ if (mCurrentProdUri == null) {
                 return true;
             case R.id.action_delete:
                 showDeleteConfirmationDialog();
-            return true;
+                return true;
             case android.R.id.home:
-                if(!mProdHasChanged) {
+                if (!mProdHasChanged) {
                     NavUtils.navigateUpFromSameTask(InventoryManagementActivity.this);
                     return true;
                 }
@@ -335,19 +334,20 @@ if (mCurrentProdUri == null) {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-String[] projection = {
-        InventoryEntry._ID,
-        InventoryEntry.COLUMN_PRODUCT_NAME,
-        InventoryEntry.COLUMN_PRODUCT_TYPE,
-        InventoryEntry.COLUMN_STOCK,
-        InventoryEntry.COLUMN_PRICE,
-        InventoryEntry.COLUMN_QUANTITY,
-        InventoryEntry.COLUMN_DISCOUNT,
-        InventoryEntry.COLUMN_SUPPLIER_PHONE};
-        return new CursorLoader(this,mCurrentProdUri,projection,null,null,null);
-}
+        String[] projection = {
+                InventoryEntry._ID,
+                InventoryEntry.COLUMN_PRODUCT_NAME,
+                InventoryEntry.COLUMN_PRODUCT_TYPE,
+                InventoryEntry.COLUMN_STOCK,
+                InventoryEntry.COLUMN_PRICE,
+                InventoryEntry.COLUMN_QUANTITY,
+                InventoryEntry.COLUMN_DISCOUNT,
+                InventoryEntry.COLUMN_SUPPLIER_PHONE};
+        return new CursorLoader(this, mCurrentProdUri, projection, null, null, null);
+    }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
@@ -368,80 +368,72 @@ String[] projection = {
         int discountColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DISCOUNT);
 
         // Extract out the value from the Cursor for the given column index
-String name = cursor.getString(nameColumnIndex);
-String product = cursor.getString(productColumnIndex);
-final int quantity = cursor.getInt(quantityColumnIndex);
-int stock = cursor.getInt(stockColumnIndex);
-int discount = cursor.getInt(discountColumnIndex);
-String phone = cursor.getString(supplierphoneColumnIndex);
-int price = cursor.getInt(priceColumnIndex);
+        String name = cursor.getString(nameColumnIndex);
+        String product = cursor.getString(productColumnIndex);
+        final int quantity = cursor.getInt(quantityColumnIndex);
+        int stock = cursor.getInt(stockColumnIndex);
+        int discount = cursor.getInt(discountColumnIndex);
+        String phone = cursor.getString(supplierphoneColumnIndex);
+        int price = cursor.getInt(priceColumnIndex);
 
-mNameEditText.setText(name);
-mType.setText(product);
-mPhoneEditText.setText(phone);
-mQuantityView.setText(Integer.toString(quantity));
-mPrice.setText(Integer.toString(price));
+        mNameEditText.setText(name);
+        mType.setText(product);
+        mPhoneEditText.setText(phone);
+        mQuantityView.setText(Integer.toString(quantity));
+        mPrice.setText(Integer.toString(price));
 
-switch(stock) {
-    case InventoryEntry.COLUMN_IN_STOCK:
-        mStockSpinner.setSelection(1);
-        break;
-    case InventoryEntry.COLUMN_OUTOF_STOCK:
-        mStockSpinner.setSelection(2);
-        break;
-    default:
-        mStockSpinner.setSelection(1);
-        break;
-}
+        switch (stock) {
+            case InventoryEntry.COLUMN_IN_STOCK:
+                mStockSpinner.setSelection(0);
+                break;
+            case InventoryEntry.COLUMN_OUTOF_STOCK:
+                mStockSpinner.setSelection(1);
+                break;
+            default:
+                mStockSpinner.setSelection(0);
+                break;
+        }
 
-switch(discount) {
-    case InventoryEntry.COLUMN_IN_DISCOUNT:
-        mDiscountSpinner.setSelection(1);
-        break;
-    case InventoryEntry.COLUMN_NO_DISCOUNT:
-        mDiscountSpinner.setSelection(2);
-        break;
-    default:
-        mDiscountSpinner.setSelection(2);
-        break;
-}
+        switch (discount) {
+            case InventoryEntry.COLUMN_IN_DISCOUNT:
+                mDiscountSpinner.setSelection(0);
+                break;
+            case InventoryEntry.COLUMN_NO_DISCOUNT:
+                mDiscountSpinner.setSelection(1);
+                break;
+            default:
+                mDiscountSpinner.setSelection(0);
+                break;
+        }
     }
-
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-mNameEditText.setText("");
-mPhoneEditText.setText("");
-mType.setText("");
-mPrice.setText("");
-mQuantityView.setText("");
-        mDiscountSpinner.setSelection(2);
+        mNameEditText.setText("");
+        mPhoneEditText.setText("");
+        mType.setText("");
+        mPrice.setText("");
+        mQuantityView.setText("");
+        mDiscountSpinner.setSelection(0);
         mStockSpinner.setSelection(1);
-        }
+    }
 
-        private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
-        @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-            mProdHasChanged = true;
-            return false;
-        }
-    };
-private void showUnsavedChangesDialog(
-        DialogInterface.OnClickListener discardButtonClickListener) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setMessage("Do you want to delete all changes and return to main page");
-    builder.setPositiveButton("Delete and Return",discardButtonClickListener);
-    builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            if(dialog != null) {
-                dialog.dismiss();
+    private void showUnsavedChangesDialog(
+            DialogInterface.OnClickListener discardButtonClickListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to delete all changes and return to main page");
+        builder.setPositiveButton("Delete and Return", discardButtonClickListener);
+        builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
             }
-        }
-    });
-    AlertDialog alertDialog = builder.create();
-    alertDialog.show();
-}
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
 
     @Override
@@ -463,6 +455,7 @@ private void showUnsavedChangesDialog(
                 };
         showUnsavedChangesDialog(discardButtonClickListener);
     }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -473,7 +466,8 @@ private void showUnsavedChangesDialog(
         }
         return true;
     }
-    private void showDeleteConfirmationDialog() {
+
+    public void showDeleteConfirmationDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the postivie and negative buttons on the dialog.
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
@@ -500,7 +494,6 @@ private void showUnsavedChangesDialog(
     }
 
 
-
     /**
      * Perform the deletion of the product in the database.
      */
@@ -523,4 +516,6 @@ private void showUnsavedChangesDialog(
 
         }
     }
+
+
 }

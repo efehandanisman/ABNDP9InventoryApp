@@ -8,22 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.abndp9inventoryapp.R;
 
-import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_DISCOUNT;
-import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_IN_DISCOUNT;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_PRICE;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_QUANTITY;
-import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_STOCK;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_SUPPLIER_PHONE;
-import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.DiscountStatus;
-import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.StockStatus;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.TABLE_NAME;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry._ID;
 
@@ -37,9 +29,10 @@ public class InventoryProvider extends ContentProvider {
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     static {
-        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY,InventoryContract.PATH_INVENTORY,INVENTORY);
-        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY,InventoryContract.PATH_INVENTORY + "/#",INVENTORY_ID);
+        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY, INVENTORY);
+        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY + "/#", INVENTORY_ID);
 
     }
 
@@ -60,29 +53,29 @@ public class InventoryProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
         Cursor cursor;
         int match = sUriMatcher.match(uri);
-        switch(match) {
+        switch (match) {
             case INVENTORY:
-                cursor = database.query(TABLE_NAME,projection, selection, selectionArgs,null,null,sortOrder);
+                cursor = database.query(TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case INVENTORY_ID:
                 selection = _ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri))};
-                cursor = database.query(TABLE_NAME, projection,selection,selectionArgs,null,null,sortOrder);
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown uri" + uri);
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(),uri);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
         final int match = sUriMatcher.match(uri);
-        switch(match) {
+        switch (match) {
             case INVENTORY:
-                return saveProduct(uri,contentValues);
+                return saveProduct(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -90,26 +83,25 @@ public class InventoryProvider extends ContentProvider {
 
     private Uri saveProduct(Uri uri, ContentValues values) {
         String name = values.getAsString(COLUMN_PRODUCT_NAME);
-        if(name== null) {
-            Toast.makeText(getContext(),"Product need a name", Toast.LENGTH_SHORT);
+        if (name == null) {
+            Toast.makeText(getContext(), R.string.name_needed, Toast.LENGTH_SHORT);
         }
-
 
 
         Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
-        if(Prodquantity < 0 || Prodquantity == null ) {
-            Toast.makeText(getContext(),"You need a valid number of quantity", Toast.LENGTH_SHORT);
+        if (Prodquantity < 0 || Prodquantity == null) {
+            Toast.makeText(getContext(), R.string.quantity_needed, Toast.LENGTH_SHORT);
         }
 
         Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
-        if(Prodprice <= 0 || Prodprice == null) {
-            Toast.makeText(getContext(),"You need a valid price", Toast.LENGTH_SHORT);
+        if (Prodprice <= 0 || Prodprice == null) {
+            Toast.makeText(getContext(), R.string.price_needed, Toast.LENGTH_SHORT);
 
         }
 
-Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
-        if(Suppphone == null) {
-            Toast.makeText(getContext(),"Who you gonna call", Toast.LENGTH_SHORT);
+        Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
+        if (Suppphone == null) {
+            Toast.makeText(getContext(), R.string.phone_needed, Toast.LENGTH_SHORT);
 
 
         }
@@ -121,7 +113,7 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
-        getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, id);
 
     }
@@ -138,7 +130,7 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = _ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateInventory(uri, contentValues, selection, selectionArgs);
 
             default:
@@ -146,25 +138,27 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
         }
 
     }
+
     private int updateInventory(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-            if (values.containsKey(COLUMN_PRODUCT_NAME)) {
+        if (values.containsKey(COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(COLUMN_PRODUCT_NAME);
             if (name == null) {
-                Toast.makeText(getContext(),"Product reqiures a name", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), R.string.name_needed, Toast.LENGTH_SHORT);
             }
         }
 
         if (values.containsKey(COLUMN_PRICE)) {
             Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
             if (Prodprice <= 0 || Prodprice == null) {
-                Toast.makeText(getContext(),"Product reqiures a name", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), R.string.price_needed, Toast.LENGTH_SHORT);
             }
         }
 
         if (values.containsKey(COLUMN_SUPPLIER_PHONE)) {
             Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
             if (Suppphone == null) {
-                throw new IllegalArgumentException("Who you gonna call?");
+                Toast.makeText(getContext(), R.string.phone_needed, Toast.LENGTH_SHORT);
+
             }
         }
 
@@ -173,7 +167,6 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
             if (Prodquantity <= 0 || Prodquantity == null) {
             }
         }
-
 
 
         if (values.size() == 0) {
@@ -227,7 +220,6 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
         // Return the number of rows deleted
         return rowsDeleted;
     }
-
 
 
 }

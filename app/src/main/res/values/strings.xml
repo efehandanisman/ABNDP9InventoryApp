@@ -20,6 +20,18 @@
 
     <string name="in_discount"> In Discount </string>
     <string name="no_discount"> No Discount </string>
-
+    <string name="unknownquery">     "Cannot query unknown uri"</string>
+    <string name="name_needed">Product need a name </string>
+    <string name="quantity_needed">Product need a valid quantity </string>
+    <string name="price_needed">Product need a valid price </string>
+    <string name="phone_needed">Product need a valid phone number </string>
+    <string name="failed_row">Failed to insert row for </string>
+    <string name="products">Products </string>
+    <string name="name">name </string>
+    <string name="price">price </string>
+    <string name="type">type </string>
+    <string name="discount">discount </string>
+    <string name="stock">stock </string>
+    <string name="quantity">quantity </string>
 
 </resources>

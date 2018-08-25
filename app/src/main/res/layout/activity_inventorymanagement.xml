@@ -1,60 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".InventoryActivity"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    tools:context=".InventoryActivity">
 
 
     <EditText
-        android:text="Product Name"
+        android:id="@+id/edit_prod_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-         android:id="@+id/edit_prod_name"/>
+        android:text="Product Name" />
 
     <EditText
-        android:text="Product Type"
+        android:id="@+id/edit_type"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/edit_type"/>
+        android:text="Product Type" />
 
     <EditText
-        android:text="Price"
+        android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/price"/>
+        android:text="Price" />
 
     <Spinner
+        android:id="@+id/spinner_stock"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/spinner_stock">
-    </Spinner>
+        android:layout_height="match_parent"></Spinner>
 
     <Spinner
+        android:id="@+id/spinner_discount"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/spinner_discount">
-    </Spinner>
-
+        android:layout_height="match_parent"></Spinner>
 
 
     <Button
         android:id="@+id/decrease_button"
         android:layout_width="wrap_content"
-        android:text="Decrease Stock"
         android:layout_height="wrap_content"
-     >
+        android:text="Decrease Stock">
 
     </Button>
 
     <Button
         android:id="@+id/increase_button"
         android:layout_width="wrap_content"
-        android:text="Increase Stock"
         android:layout_height="wrap_content"
-        >
+        android:text="Increase Stock">
 
     </Button>
 
@@ -64,16 +58,15 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:padding="15dp"
-        android:text="Quantity"
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <EditText
+        android:id="@+id/phone"
         android:layout_width="match_parent"
-        android:text="Supplier Phone"
         android:layout_height="match_parent"
-        android:id="@+id/phone"/>
+        android:text="Supplier Phone" />
 
     <Button
         android:id="@+id/order_button"
@@ -82,7 +75,17 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="18dp"
-        android:text="order"
-         />
+        android:text="order" />
+
+
+    <Button
+        android:id="@+id/delete_prod"
+        android:layout_width="110dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
+        android:text="delete" />
+
 
 </LinearLayout>
