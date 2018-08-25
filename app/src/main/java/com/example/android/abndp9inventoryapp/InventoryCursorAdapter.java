@@ -39,19 +39,18 @@ public class InventoryCursorAdapter extends CursorAdapter {
         TextView product = (TextView) view.findViewById(R.id.product);
         TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
-        final Button sellButton = (Button) view.findViewById(R.id.sellProduct);
+        Button sellButton = (Button) view.findViewById(R.id.sellProduct);
 
-        final int columnIdIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
+        final long columnIdIndex = cursor.getLong(cursor.getColumnIndex(InventoryContract.InventoryEntry._ID));
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
         final int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
+
         final String quantity = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
         String price = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE));
 
 
         String productName = cursor.getString(nameColumnIndex);
         String productType = cursor.getString(productColumnIndex);
-
-
         name.setText(productName);
         product.setText(productType);
         priceTextView.setText(price);
@@ -64,10 +63,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
             int quantityInt = Integer.parseInt(quantity) - 1 ;
              ContentValues values = new ContentValues();
                 values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, quantityInt);
-                String selection = InventoryContract.InventoryEntry._ID + "=?";
                 Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, columnIdIndex);
-                String[] selectionArgs = new String[]{String.valueOf(columnIdIndex)};
-                context.getContentResolver().update(updateUri, values, selection, selectionArgs);
+                context.getContentResolver().update(updateUri, values, null, null);
 
             }
         });

@@ -91,34 +91,26 @@ public class InventoryProvider extends ContentProvider {
     private Uri saveProduct(Uri uri, ContentValues values) {
         String name = values.getAsString(COLUMN_PRODUCT_NAME);
         if(name== null) {
-            throw new IllegalArgumentException("Product need a name");
-        }
-       Integer discount = values.getAsInteger(COLUMN_DISCOUNT);
-        if(!DiscountStatus(discount)) {
-        throw new IllegalArgumentException("You need to specify whether this product is in discount");
+            Toast.makeText(getContext(),"Product need a name", Toast.LENGTH_SHORT);
         }
 
 
-
-        Integer Prodstock = values.getAsInteger(COLUMN_STOCK);
-        if(!StockStatus(Prodstock)) {
-            throw new IllegalArgumentException("You need to let us know whether we have this product or not");
-
-        }
 
         Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
         if(Prodquantity < 0 || Prodquantity == null) {
-            throw new IllegalArgumentException("You can not have negative # of products");
+            Toast.makeText(getContext(),"You need a valid number of quantity", Toast.LENGTH_SHORT);
         }
 
         Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
         if(Prodprice <= 0 || Prodprice == null) {
-            throw new IllegalArgumentException("Someone needs to pay the bills, you can not give away products for free");
+            Toast.makeText(getContext(),"You need a valid price", Toast.LENGTH_SHORT);
+
         }
 
 Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
         if(Suppphone == null) {
-            throw new IllegalArgumentException("Who you gonna call?");
+            Toast.makeText(getContext(),"Who you gonna call", Toast.LENGTH_SHORT);
+
 
         }
 
@@ -158,14 +150,14 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
             if (values.containsKey(COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(COLUMN_PRODUCT_NAME);
             if (name == null) {
-                throw new IllegalArgumentException("Product requires a name");
+                Toast.makeText(getContext(),"Product reqiures a name", Toast.LENGTH_SHORT);
             }
         }
 
         if (values.containsKey(COLUMN_PRICE)) {
             Integer Prodprice = values.getAsInteger(COLUMN_PRICE);
             if (Prodprice <= 0 || Prodprice == null) {
-                throw new IllegalArgumentException("Product requires a valid price");
+                Toast.makeText(getContext(),"Product reqiures a name", Toast.LENGTH_SHORT);
             }
         }
 
@@ -179,7 +171,6 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
         if (values.containsKey(COLUMN_QUANTITY)) {
             Integer Prodquantity = values.getAsInteger(COLUMN_QUANTITY);
             if (Prodquantity <= 0 || Prodquantity == null) {
-                throw new IllegalArgumentException("Product requires a valid quantity");
             }
         }
 

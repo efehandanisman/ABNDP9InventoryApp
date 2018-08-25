@@ -197,7 +197,6 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         if (TextUtils.isEmpty(nameString) ||
                 TextUtils.isEmpty(typeString) ||
                 TextUtils.isEmpty(priceString) ||
-                TextUtils.isEmpty(phoneString) ||
 
                 TextUtils.isEmpty(phoneString)) {
             Toast.makeText(this, "You did not fill all the fields", Toast.LENGTH_SHORT).show();
