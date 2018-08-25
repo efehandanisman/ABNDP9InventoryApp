@@ -32,8 +32,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     //Adapter of the listview
 
     InventoryCursorAdapter mCursorAdapter;
-    InventoryDbHelper mDbHelper;
-    Button orderNowButton;
+    String mQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,22 +77,6 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     }
 
     // Taken from https://github.com/Muneera-Salah/Inventory-App-Stage-2/blob/master/app/src/main/java/com/example/anrdoid/inventoryappstage2/InventoryActivity.java
-    public void sale(int productID, String mQuantity) {
-        Integer quantity = Integer.parseInt(mQuantity);
-        quantity = quantity - 1;
-        if (quantity > 0) {
-            ContentValues values = new ContentValues();
-            values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, mQuantity);
-            Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, productID);
-            int rowsAffected = getContentResolver().update(updateUri, values, null, null);
-            Toast.makeText(this, "Product sold", Toast.LENGTH_SHORT).show();
-
-            Log.d("Log msg", "rowsAffected " + rowsAffected + " - productID " + productID + " - quantity " + mQuantity + " , decreaseCount has been called.");
-        } else {
-            Toast.makeText(this, "We don't have this product anymore", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
 
     private void saveProduct() {

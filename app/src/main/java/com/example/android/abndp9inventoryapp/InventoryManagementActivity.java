@@ -185,19 +185,9 @@ final Button increment = (Button) findViewById(R.id.increase_button);
         String nameString = mNameEditText.getText().toString().trim();
         String typeString = mType.getText().toString().trim();
         String priceString = mPrice.getText().toString().trim();
-        String stockInt = mStockSpinner.getSelectedItem().toString().trim();
-        String discountInt = mDiscountSpinner.getSelectedItem().toString().trim();
         String phoneString = mPhoneEditText.getText().toString().trim();
-        if(mStockSpinner != null && mStockSpinner.getSelectedItem() !=null ) {
-            stockInt = (String)mStockSpinner.getSelectedItem();
-        } else  {
-        }
 
-        if(mDiscountSpinner != null && mDiscountSpinner.getSelectedItem() !=null ) {
-            discountInt = (String)mDiscountSpinner.getSelectedItem();
-        } else  {
 
-        }
 
 
 
@@ -208,9 +198,8 @@ final Button increment = (Button) findViewById(R.id.increase_button);
                 TextUtils.isEmpty(typeString) ||
                 TextUtils.isEmpty(priceString) ||
                 TextUtils.isEmpty(phoneString) ||
-                TextUtils.isEmpty(stockInt) ||
-                TextUtils.isEmpty(phoneString) ||
-                TextUtils.isEmpty(discountInt)) {
+
+                TextUtils.isEmpty(phoneString)) {
             Toast.makeText(this, "You did not fill all the fields", Toast.LENGTH_SHORT).show();
             return false;
         } else {

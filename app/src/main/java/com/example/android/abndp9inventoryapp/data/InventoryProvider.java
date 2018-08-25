@@ -9,6 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.android.abndp9inventoryapp.R;
 
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_DISCOUNT;
 import static com.example.android.abndp9inventoryapp.data.InventoryContract.InventoryEntry.COLUMN_IN_DISCOUNT;
@@ -177,17 +182,9 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
                 throw new IllegalArgumentException("Product requires a valid quantity");
             }
         }
-        Integer discount = values.getAsInteger(COLUMN_DISCOUNT);
-        if(!DiscountStatus(discount)) {
-            throw new IllegalArgumentException("You need to specify whether this product is in discount");
 
-        }
 
-        Integer stock = values.getAsInteger(COLUMN_STOCK);
-        if(!StockStatus(stock)) {
-            throw new IllegalArgumentException("You need to let us know whether we have this product or not");
 
-        }
         if (values.size() == 0) {
             return 0;
         }
@@ -239,6 +236,7 @@ Integer Suppphone = values.getAsInteger(COLUMN_SUPPLIER_PHONE);
         // Return the number of rows deleted
         return rowsDeleted;
     }
+
 
 
 }

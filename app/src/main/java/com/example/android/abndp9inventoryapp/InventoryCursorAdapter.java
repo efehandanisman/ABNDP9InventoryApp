@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
         final int columnIdIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME);
-        int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
+        final int productColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_TYPE);
         final String quantity = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_QUANTITY));
         String price = cursor.getString(cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRICE));
 
@@ -50,18 +51,26 @@ public class InventoryCursorAdapter extends CursorAdapter {
         String productName = cursor.getString(nameColumnIndex);
         String productType = cursor.getString(productColumnIndex);
 
-        sellButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                InventoryActivity Activity = (InventoryActivity) context;
-                Activity.sale(Integer.valueOf(columnIdIndex), quantity);
-            }
-        });
         name.setText(productName);
         product.setText(productType);
         priceTextView.setText(price);
         quantityTextView.setText(quantity);
+
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             // when sale is pressed - the quantity get -1
+            int quantityInt = Integer.parseInt(quantity) - 1 ;
+             ContentValues values = new ContentValues();
+                values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, quantityInt);
+                String selection = InventoryContract.InventoryEntry._ID + "=?";
+                Uri updateUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, columnIdIndex);
+                String[] selectionArgs = new String[]{String.valueOf(columnIdIndex)};
+                context.getContentResolver().update(updateUri, values, selection, selectionArgs);
+
+            }
+        });
 
         if (Integer.parseInt(quantity) > 0) {
             sellButton.setVisibility(View.VISIBLE);
@@ -70,8 +79,9 @@ public class InventoryCursorAdapter extends CursorAdapter {
             sellButton.setVisibility(View.GONE);
         }
 
+    }
 
 
 
-        }
+
     }
