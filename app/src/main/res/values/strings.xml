@@ -33,5 +33,6 @@
     <string name="discount">discount </string>
     <string name="stock">stock </string>
     <string name="quantity">quantity </string>
+    <string name="phone">phone number </string>
 
 </resources>

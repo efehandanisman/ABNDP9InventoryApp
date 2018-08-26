@@ -7,6 +7,7 @@
 
     <TextView
         android:id="@+id/name"
+        android:hint="@string/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
@@ -15,6 +16,7 @@
 
     <TextView
         android:id="@+id/product"
+        android:hint="@string/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
@@ -27,14 +29,18 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:text="0"
+        android:inputType="number"
+        android:hint="@string/quantity"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="#AEB6BD" />
 
     <TextView
         android:id="@+id/price"
+        android:hint="@string/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
+        android:inputType="number"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="#AEB6BD" />
 
@@ -54,6 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
+        android:inputType="number"
+        android:hint="@string/phone"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="#AEB6BD" />
 
